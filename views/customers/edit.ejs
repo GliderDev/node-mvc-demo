@@ -1,0 +1,60 @@
+<%- include ../../public/layout/header.ejs %>
+
+<% console.log(data[0]);%>
+        <div class="page-data">
+            
+            <form method="post" action="/customers/edit/<%=data[0].user_id%>">
+                <table cellpadding="11">
+
+                <tr>
+                    <td class="label">First name</td>
+                    <td>: <input type="text" name="f_name" value="<%=data[0].first_name%>" required></td>
+                </tr>
+
+                <tr>
+                    <td class="label">Last Name</td>
+                    <td>: <input type="text" name="l_name" value="<%=data[0].last_name%>" required></td>
+                </tr>
+
+                <tr>
+                    <td class="label">Email</td>
+                    <td>: <input type="text" name="email" value="<%=data[0].email%>" required></td>
+                </tr>
+
+                <tr>
+                    <td class="label">Password</td>
+                    <td>: <input type="text" name="password" value="<%=data[0].password%>"required></td>
+                </tr>
+
+                <tr>
+                    <td class="label">Date Of Birth</td>
+                    <td>: <input type="text" name="dob" value="<%=data[0].dob%>" required></td>
+                </tr>
+
+                <tr>
+                    <td class="label">Phone Number</td>
+                    <td>: <input type="text" name="phone" value="<%=data[0].phone%>" required></td>
+                </tr>
+
+                <tr>
+                    <td class="label">Employee Code</td>
+                    <td>: <input type="text" name="empcode" value="<%=data[0].emp_code%>" required></td>
+                </tr>
+
+                <tr>
+                    <td class="label">File Uploads</td>
+                    <td>: <input type="file" name="uploads" value="<%=data[0].uploads%>" ></td>
+                </tr>
+                    <td class="label"></td>
+                    <td>
+                        &nbsp; <input type="submit" name="submit" value="Save">
+                       <input type="button" name="cancel" value="Cancel" class="cancel" onClick="cancelAdd()">
+                    </td>
+                 </tr>
+                </table>
+            </form>
+            
+        </div>
+        
+
+<%- include ../../public/layout/footer.ejs %>

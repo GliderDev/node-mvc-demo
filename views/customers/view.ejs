@@ -1,0 +1,59 @@
+<%- include ../../public/layout/header.ejs %>
+
+<h1><%=page_title%></h1>
+
+        <div class="page-data">
+         <div class="data-btn">
+           <button onClick="addUser();">+ Add</button>
+         </div>
+         <div class="data-table">
+            <table border="1" cellpadding="7" cellspacing="7">
+                <tr>
+                    <th width="50px">No</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Date of Birth</th>
+                    <th>Employee code</th>
+                    <th>Phone Number</th>
+                    <th>Uploads</th>
+
+                    <th width="120px">Action</th>
+                </tr>
+                               
+                <% if(data.length){ 
+                                
+                 for(var i = 0;i < data.length;i++) { %>
+                 
+                <tr>
+                    <td><%=(i+1)%></td>
+                    <td><%=data[i].first_name%></td>
+                    <td><%=data[i].last_name%></td>
+                    <td><%=data[i].email%></td>
+                    <td><%=data[i].dob%></td>
+                    <td><%=data[i].emp_code%></td>
+                    <td><%=data[i].phone%></td>
+                    <td><%=data[i].uploads%></td>
+                    
+                    <td>
+                        <a class="a-inside edit" href="../customers/edit/<%=data[i].user_id%>">Edit</a>
+                       
+                        <a class="a-inside delete" href="../customers/delete/<%=data[i].user_id%>">Del</a>
+                       
+                    </td>
+                </tr>
+            <% }
+            
+             }else{ %>
+                 <tr>
+                    <td colspan="3">No user</td>
+                 </tr>
+            <% } %>
+                
+                              
+                
+            </table>
+         </div>
+        </div>
+        
+<%- include ../../public/layout/footer.ejs %>
