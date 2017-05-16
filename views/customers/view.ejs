@@ -21,19 +21,25 @@
                     <th width="120px">Action</th>
                 </tr>
                                
-                <% if(data.length){ 
+                <%                     
+                    if(data.length){ 
                                 
-                 for(var i = 0;i < data.length;i++) { %>
+                         for(var i = 0;i < data.length;i++) { 
+
+                            var dobFormat =  dateTime.create(data[i].dob);
+                            var dob       =  dobFormat.format('Y-m-d');
+
+                 %>
                  
                 <tr>
                     <td><%=(i+1)%></td>
                     <td><%=data[i].first_name%></td>
                     <td><%=data[i].last_name%></td>
                     <td><%=data[i].email%></td>
-                    <td><%=data[i].dob%></td>
+                    <td><%=dob%></td>
                     <td><%=data[i].emp_code%></td>
                     <td><%=data[i].phone%></td>
-                    <td><%=data[i].uploads%></td>
+                    <td><%=data[i].profile_pic%></td>
                     
                     <td>
                         <a class="a-inside edit" href="../customers/edit/<%=data[i].user_id%>">Edit</a>

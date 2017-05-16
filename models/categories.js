@@ -1,5 +1,5 @@
 
-
+// Categories list functionality
 
 exports.list = function(req, res){
 
@@ -21,6 +21,9 @@ exports.list = function(req, res){
   
 };
 
+
+// Categories Add functionality
+
 exports.add = function(req, res){
 
     console.log('Add Categories  Page...');
@@ -29,7 +32,8 @@ exports.add = function(req, res){
 };
 
 
-/*Save the customer*/
+// Categories save functionality
+
 exports.save = function(req,res){
 
     console.log(req.body);
@@ -50,16 +54,16 @@ exports.save = function(req,res){
           if (err)
               console.log("Error inserting : %s ",err );
 
-        //  res.render('customers/view',{page_title:"Customers - Node.js",data:rows});
          console.log('success');
          res.redirect('/');
           
         });
-        
-       // console.log(query.sql); get raw query
     
     });
 };
+
+
+// Categories save functionality
 
 exports.edit = function(req, res){
 
@@ -79,13 +83,14 @@ exports.edit = function(req, res){
            
          });
          
-         //console.log(query.sql);
     }); 
 };
 
+
+// Categories save and edit functionality
+
 exports.save_edit = function(req,res){
 
-    console.log(req.body);
     console.log('Save Edit Categories to DB...');
 
     var input = JSON.parse(JSON.stringify(req.body));
@@ -105,21 +110,23 @@ exports.save_edit = function(req,res){
           if (err)
               console.log("Error inserting : %s ",err );
 
-        //  res.render('customers/view',{page_title:"Customers - Node.js",data:rows});
          console.log('success');
          res.redirect('/categories/view');
           
         });
-        
-       // console.log(query.sql); get raw query
-    
+            
     });
 };
+
+
+// Categories delete functionality
 
 exports.delete_category = function(req,res){
           
      var id = req.params.domain_id;
+
      console.log("Delete id = "+id);
+     
      req.getConnection(function (err, connection) {
         
         connection.query("DELETE FROM domain  WHERE domain_id = ? ",[id], function(err, rows)

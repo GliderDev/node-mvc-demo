@@ -1,6 +1,5 @@
 <%- include ../../public/layout/header.ejs %>
 
-<% console.log(data[0]);%>
         <div class="page-data">
             
             <form method="post" action="/customers/edit/<%=data[0].user_id%>">
@@ -28,7 +27,11 @@
 
                 <tr>
                     <td class="label">Date Of Birth</td>
-                    <td>: <input type="text" name="dob" value="<%=data[0].dob%>" required></td>
+                    <% 
+                        var dobFormat = dateTime.create(data[0].dob);
+                        var dob       = dobFormat.format('Y-m-d');
+                    %> 
+                    <td>: <input type="text" name="dob" value="<%=dob %>" required></td>
                 </tr>
 
                 <tr>

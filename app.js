@@ -5,20 +5,20 @@
  */
 
 // Including extra Packages
-var http            = require('http')
-    , express       = require('express')
-    , mysql         = require('mysql')
-    , connection    = require('express-myconnection')
-    , path          = require('path')
-    , fs            = require('fs')
-    , cookieParser  = require('cookie-parser')
-    , session       = require('express-session')
-    , bodyParser    = require('body-parser')
-    , csrf          = require('csurf')
-    , passport      = require('passport')
-    , LocalStrategy = require('passport-local')
-    , multer        = require('multer')
-    , dateTime      = require('node-datetime');
+var http                = require('http')
+    , express           = require('express')
+    , mysql             = require('mysql')
+    , connection        = require('express-myconnection')
+    , path              = require('path')
+    , fs                = require('fs')
+    , cookieParser      = require('cookie-parser')
+    , session           = require('express-session')
+    , bodyParser        = require('body-parser')
+    , csrf              = require('csurf')
+    , passport          = require('passport')
+    , LocalStrategy     = require('passport-local')
+    , expressFileUpload = require('express-fileupload')
+    , dateTime          = require('node-datetime');
 
 
 // Including local modules
@@ -26,8 +26,9 @@ var userModel = require('./models/userModel');
 
 
 // Configuring  csrf and bodyParser middlewares 
-var csrfProtection = csrf({ cookie: true });
-var parseForm = bodyParser.urlencoded({ extended: false });
+var csrfProtection   = csrf({ cookie: true });
+var parseForm        = bodyParser.urlencoded({ extended: false });
+//var parseFileUploads = expressFileUpload.urlencoded({extended:false});
 
 // ======================== Authorization Configuration ========================
 // Configuring the local strategy for use by Passport.
@@ -118,13 +119,13 @@ app.use(
     
     connection(mysql,{
         
-        host: 'localhost',
-        user: 'root',
+        host     : 'localhost',
+        user     : 'root',
         password : 'pass',
-        port : 3306, //port mysql
-        database:'dmcoderepo'
+        port     : 3306, 
+        database : 'dmcoderepo'
 
-    },'pool') //or single
+    }) 
 
 );
 
@@ -141,8 +142,10 @@ app.use(session({
 }));
 
 app.locals.csrfProtection = csrfProtection;
-app.locals.parseForm = parseForm;
+app.locals.parseForm        = parseForm;
+//app.locals.parseFileUploads = parseFileUploads;
 app.use(parseForm);
+app.use(expressFileUpload())
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.

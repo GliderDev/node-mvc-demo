@@ -20,17 +20,20 @@ console.log();
     function(req, res) {
 
         var title = '';
-        if ( req.isAuthenticated() ) {
+        if ( req.isAuthenticated() ) 
+        {
             title += ' '+req.user.displayName;
             href = 'logout';
-        } else {
+            res.render(ctrlName + '/index', { title: title, href: href,csrf: csrf});
+        } 
+        else 
+        {
             title += ' Guest';
             href = 'login';
+            res.redirect('/auth/login');
         }
 
-
-
-        res.render(ctrlName + '/index', { title: title, href: href,csrf: csrf});    //userCount: userCount,categoryCount: categoryCount
+       // res.render(ctrlName + '/index', { title: title, href: href,csrf: csrf});   
                                           
     }
   );
