@@ -22,7 +22,7 @@ var http                = require('http')
 
 
 // Including local modules
-var userModel = require('./models/userModel');
+var userModel = require('./models/User');
 
 
 // Configuring  csrf and bodyParser middlewares 
