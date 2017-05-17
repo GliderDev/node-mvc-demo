@@ -18,7 +18,7 @@ var userModel = require('../models/userModel');
 module.exports.controller = function(app) {
     
     // app local scope variable definition
-    var csrfValidation      = app.locals.csrfProtection;
+    var csrfValidation = app.locals.csrfProtection;
     var parseForm = app.locals.parseForm;
     var passport  = app.locals.passport;
 

@@ -65,13 +65,19 @@ exports.save = function(req,res){
     console.log('Save Customer to DB...');
 
     var input      = JSON.parse(JSON.stringify(req.body));
-    var sampleFile = req.files.uploads;
+    var img        = req.files.uploads;
 
     var now        = dateTime.create();
     var nowDate    = now.format('Y-m-d');
 
     var birthdate  = dateTime.create(input.dob);
     var dobformat  = birthdate.format('Y-m-d');
+
+    // Uploading image to directory
+    img.mv(__dirname+'/../public/uploads/'+img.name, function(err) {
+      if (err)
+        new Error('error while uploading file '+err);
+    });
 
     req.getConnection(function (err, connection) {
         
@@ -88,27 +94,19 @@ exports.save = function(req,res){
             doj                  : nowDate,
             status               : 1,
             auth_key             : '',
-            profile_pic          : sampleFile.name
+            profile_pic          : img.name
         };
 
-          sampleFile.mv('public/uploads/', function(err) {
-            if (err)
-              console.log('error '+err)
-            else         
-              console.log('Uploaded...');
-          });
-
-
-        var query = connection.query("INSERT INTO user set ? ",data, function(err, rows)
-        {
-  
-          if (err)
-              console.log("Error inserting : %s ",err );
-
-         res.redirect('/customers/view');
-          
-        });
-    
+        var query = connection.query(
+          "INSERT INTO user set ? "
+          , data 
+          , function(err, rows) {
+              if (err)
+                new Error('Error while inserting :'+err);
+              else 
+                res.redirect('/customers/view');
+          }
+        );
     });
 };
 
