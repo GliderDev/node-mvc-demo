@@ -18,27 +18,29 @@ var userModel = require('../models/userModel');
 module.exports.controller = function(app) {
     
     // app local scope variable definition
-    var csrfValidation = app.locals.csrfProtection;
-    var parseForm = app.locals.parseForm;
-    var passport  = app.locals.passport;
+    var csrfMiddleware = app.locals.csrfProtection
+    , parseForm        = app.locals.parseForm
+    , passport         = app.locals.passport;
 
     // HTTP GET - login route
-    app.get(ctrlRoute + '/login', csrfValidation, function(req, res) {
+    app.get(ctrlRoute + '/login', csrfMiddleware, function(req, res) {
 
         res.render( ctrlName + '/login', { 
             csrf: req.csrfToken() 
         });
-
     });
 
     // HTTP POST - login form process route
-    app.post(ctrlRoute + '/login', 
-        passport.authenticate('login', { 
+    app.post(
+        ctrlRoute + '/login' 
+        , passport.authenticate(
+            'login'
+            , { 
             failureRedirect: ctrlRoute + '/fail', // redirection path on fail
-        }), 
-        parseForm, 
-        csrfValidation, 
-        function(req, res) {
+        })
+        , parseForm
+        , csrfMiddleware
+        , function(req, res) {
             res.redirect('/');
         }
     );
@@ -54,14 +56,18 @@ module.exports.controller = function(app) {
         res.render( ctrlName + '/fail');
     });
 
-     app.get(ctrlRoute + '/register', function(req, res) {
-        res.render( ctrlName + '/register');
+    // HTTP GET - Register page
+    app.get(ctrlRoute + '/register', csrfMiddleware, function(req, res) {
+        res.render( ctrlName + '/register', { 
+            csrf: req.csrfToken() 
+        });
     });
 
-
-
-
-
-
+    // HTTP GET - Forgot password page
+    app.get(ctrlRoute + '/forgot', csrfMiddleware, function(req, res) {
+        res.render( ctrlName + '/forgot', { 
+            csrf: req.csrfToken() 
+        });
+    });
 
 }; // End of Authorization Controller

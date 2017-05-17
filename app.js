@@ -110,7 +110,7 @@ app.use(function(req, res, next){
     domain.run(next);
 });
 
-//Adding th epublic folder and its common views,js files etc..
+//Adding th public folder as static flder to server css, js and images files
 app.use(express.static(path.join(__dirname, 'public')));
 
 

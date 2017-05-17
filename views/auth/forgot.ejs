@@ -1,0 +1,20 @@
+<%- include('./../layouts/login/header') %>
+<div class="form-box" id="login-box">
+    <div class="header">Reset your password</div>
+
+    <form action="/auth/login" method="post">
+          
+        <div class="body bg-gray">
+            <div class="form-group">
+                <input type="hidden" name="_csrf" value="<%= csrf %>"><br/>
+                <input type="text" name="email" class="form-control" placeholder="email"/>
+            </div>
+        </div>
+        <div class="footer">                                                               
+            <button type="submit" class="btn bg-olive btn-block">Submit</button>
+
+            <a href="/auth/login" class="text-center">Sign In</a>  
+        </div>
+    </form>
+</div>
+<%- include('./../layouts/login/footer') %>
