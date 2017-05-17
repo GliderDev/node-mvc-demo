@@ -18,8 +18,8 @@ var http                = require('http')
     , passport          = require('passport')
     , LocalStrategy     = require('passport-local')
     , expressFileUpload = require('express-fileupload')
-    , dateTime          = require('node-datetime');
-
+    , dateTime          = require('node-datetime')
+    , Sequelize         = require('sequelize');
 
 // Including local modules
 var userModel = require('./models/User');
@@ -28,14 +28,31 @@ var userModel = require('./models/User');
 // Configuring  csrf and bodyParser middlewares 
 var csrfProtection   = csrf({ cookie: true });
 var parseForm        = bodyParser.urlencoded({ extended: false });
-//var parseFileUploads = expressFileUpload.urlencoded({extended:false});
+
+// ======================== Sequelize ORM Configuring ========================
+
+var User   = require('./models/orm/User');
+var Domain = require('./models/orm/Domain');
+
+/*User.findOne().then(function(res){
+  console.log(res.user_id);
+  console.log(res.first_name);
+  console.log(res.last_name);
+});
+
+Domain.findOne().then(function(res){
+  console.log(res.domain_id);
+  console.log(res.domain);
+  console.log(res.description);
+});*/
+
 
 // ======================== Authorization Configuration ========================
 // Configuring the local strategy for use by Passport.
 passport.use('login', new LocalStrategy({
     passReqToCallBack: true
 },
-    function(username, password, cb) {
+function(username, password, cb) {
         userModel.findByUsername(username, function(err, user) {
             if (err) { return cb(err); }
             if (!user) { return cb(null, false); }
