@@ -49,32 +49,6 @@ var parseForm = bodyParser.urlencoded({ extended: false })
 // need to run only once to create permissions
 // rbac.setRole();
 
-// ======================== Authorization Configuration ======================
-// Configuring the local strategy for use by Passport.
-passport.use('login', new LocalStrategy({
-  passReqToCallBack: true
-},
-function (username, password, cb) {
-  userModel.findByUsername(username, function (err, user) {
-    if (err) { return cb(err) }
-    if (!user) { return cb(null, false) }
-    if (user.password !== password) { return cb(null, false) }
-    return cb(null, user)
-  })
-}))
-
-// Configure Passport authenticated session persistence.
-passport.serializeUser(function (user, cb) {
-  cb(null, user.id)
-})
-
-passport.deserializeUser(function (id, cb) {
-  userModel.findById(id, function (err, user) {
-    if (err) { return cb(err) }
-    cb(null, user)
-  })
-})
-
 // Creating express object
 var app = express()
 
@@ -114,23 +88,66 @@ app.locals.parseForm = parseForm
 app.use(parseForm)
 app.use(expressFileUpload())
 
-// Initialize Passport and restore authentication state, if any, from the
-// session.
-app.use(passport.initialize())
-app.use(passport.session())
-app.locals.passport = passport
-
 // flash message middleware
 app.use(require('flash')())
 app.use(function (req, res, next) {
     // if there's a flash message, transfer
     // it to the context, then clear it
-    // res.locals.flash = req.session.flash;
+  res.locals.flash = req.session.flash
   if (req.session.flash) {
     delete req.session.flash
   }
   next()
 })
+
+// ======================== Authorization Configuration ======================
+var User = require('./models/orm/User')
+// Configuring the local strategy for use by Passport.
+passport.use('login', new LocalStrategy({
+  passReqToCallback: true
+},
+function (req, email, password, cb) {
+  User.findOne({
+    where: {
+      email: email,
+      password: password
+    }
+  }).then(function (user) {
+    let userData = JSON.stringify(user)
+    if (userData !== 'null') {
+      return cb(null, user)
+    } else {
+      return cb(null, false)
+    }
+  })
+}))
+
+// Configure Passport authenticated session persistence.
+passport.serializeUser(function (user, cb) {
+  cb(null, user.user_id)
+})
+
+passport.deserializeUser(function (id, cb) {
+  User.findOne({
+    where: {
+      user_id: id
+    }
+  }).then(function (user) {
+    let userData = JSON.stringify(user)
+
+    if (userData !== 'null') {
+      cb(null, user)
+    } else {
+      cb(new Error('Invalid User'), false)
+    }
+  })
+})
+
+// Initialize Passport and restore authentication state, if any, from the
+// session.
+app.use(passport.initialize())
+app.use(passport.session())
+app.locals.passport = passport
 
 // dynamically include routes (Controller)
 fs.readdirSync('./controllers').forEach(function (file) {

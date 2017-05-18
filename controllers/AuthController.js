@@ -25,7 +25,8 @@ module.exports.controller = function (app) {
   app.post('/auth/login',
     passport.authenticate(
       'login', {
-        failureRedirect: 'auth/fail' // redirection path on fail
+        failureRedirect: '/auth/login',
+        failureFlash: true
       }),
     parseForm, csrfMiddleware, function (req, res) {
       res.redirect('/')
