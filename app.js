@@ -47,7 +47,7 @@ var Domain = require('./models/orm/Domain');
 // ======================== RBAC Configuring ========================
     
 
-rbac = require('./models/Rbac');
+//rbac = require('./models/Rbac');
 // need to run only once to create permissions
 //rbac.setRole();
 
