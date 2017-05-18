@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "acl": "^0.4.10",
+    "acl-sequelize": "^0.1.2",
     "body-parser": "^1.17.1",
     "connect-ensure-login": "^0.1.1",
     "cookie-parser": "^1.4.3",

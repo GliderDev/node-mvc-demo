@@ -18,8 +18,7 @@ var http                = require('http')
     , passport          = require('passport')
     , LocalStrategy     = require('passport-local')
     , expressFileUpload = require('express-fileupload')
-    , dateTime          = require('node-datetime')
-    , Sequelize         = require('sequelize');
+    , dateTime          = require('node-datetime');
 
 // Including local modules
 var userModel = require('./models/User');
@@ -30,22 +29,27 @@ var csrfProtection   = csrf({ cookie: true });
 var parseForm        = bodyParser.urlencoded({ extended: false });
 
 // ======================== Sequelize ORM Configuring ========================
-
 var User   = require('./models/orm/User');
 var Domain = require('./models/orm/Domain');
 
-/*User.findOne().then(function(res){
-  console.log(res.user_id);
-  console.log(res.first_name);
-  console.log(res.last_name);
-});
+// User.findOne().then(function(res){
+//   console.log(res.user_id);
+//   console.log(res.first_name);
+//   console.log(res.last_name);
+// });
 
-Domain.findOne().then(function(res){
-  console.log(res.domain_id);
-  console.log(res.domain);
-  console.log(res.description);
-});*/
+// Domain.findOne().then(function(res){
+//   console.log(res.domain_id);
+//   console.log(res.domain);
+//   console.log(res.description);
+// });
 
+// ======================== RBAC Configuring ========================
+    
+
+rbac = require('./models/Rbac');
+// need to run only once to create permissions
+//rbac.setRole();
 
 // ======================== Authorization Configuration ========================
 // Configuring the local strategy for use by Passport.
