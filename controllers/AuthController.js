@@ -4,9 +4,8 @@
  * This controller is used for user authorization
  */
 
-// Creating User model object
-// var userModel = require('../models/User');
-
+var auth = require('../models/Auth')
+var flashHelper = require('../lib/flashHelper')
 // Module definition
 module.exports.controller = function (app) {
   // app local scope variable definition
@@ -16,8 +15,10 @@ module.exports.controller = function (app) {
 
   // HTTP GET - login route
   app.get('/auth/login', csrfMiddleware, function (req, res) {
+    let message = flashHelper.getFlash(res, 'loginStatus')
     res.render('auth/login', {
-      csrf: req.csrfToken()
+      csrf: req.csrfToken(),
+      message: message
     })
   })
 
@@ -27,8 +28,11 @@ module.exports.controller = function (app) {
       'login', {
         failureRedirect: '/auth/login',
         failureFlash: true
-      }),
-    parseForm, csrfMiddleware, function (req, res) {
+      }
+    ),
+    parseForm,
+    auth.rememberMe,
+    csrfMiddleware, function (req, res) {
       res.redirect('/')
     })
 
@@ -36,11 +40,6 @@ module.exports.controller = function (app) {
   app.get('/auth/logout', function (req, res) {
     req.logout()
     res.redirect('/')
-  })
-
-  // HTTP GET - logout route
-  app.get('/auth/fail', function (req, res) {
-    res.render('auth/fail')
   })
 
   // HTTP GET - Register page
@@ -57,3 +56,4 @@ module.exports.controller = function (app) {
     })
   })
 } // End of Authorization Controller
+

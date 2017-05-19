@@ -1,6 +1,9 @@
 var Sequelize = require('sequelize')
 
-var sequelize = new Sequelize('dmcoderepo', 'root', 'pass')
+var sequelize = new Sequelize('dmcoderepo', 'root', 'pass', {
+  // Disables console logging queries
+  logging: false
+})
 
 var User = sequelize.define('user', {
   user_id: {

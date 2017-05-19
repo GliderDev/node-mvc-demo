@@ -18,7 +18,6 @@ var csrf = require('csurf')
 var passport = require('passport')
 var LocalStrategy = require('passport-local')
 var expressFileUpload = require('express-fileupload')
-// var dateTime = require('node-datetime')
 
 // Including local modules
 var userModel = require('./models/User')
@@ -26,22 +25,6 @@ var userModel = require('./models/User')
 // Configuring  csrf and bodyParser middlewares
 var csrfProtection = csrf({ cookie: true })
 var parseForm = bodyParser.urlencoded({ extended: false })
-
-// ======================== Sequelize ORM Configuring ========================
-// var User = require('./models/orm/User')
-// var Domain = require('./models/orm/Domain')
-
-// User.findOne().then(function(res){
-//   console.log(res.user_id);
-//   console.log(res.first_name);
-//   console.log(res.last_name);
-// });
-
-// Domain.findOne().then(function(res){
-//   console.log(res.domain_id);
-//   console.log(res.domain);
-//   console.log(res.description);
-// });
 
 // ======================== RBAC Configuring ========================
 
@@ -59,7 +42,7 @@ app.set('port', process.env.PORT || 3000)
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '/views'))
 
-// Adding th public folder as static flder to server css, js and images files
+// Adding th public folder as static folder to server css, js and images files
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Database connection string
@@ -91,8 +74,20 @@ app.use(expressFileUpload())
 // flash message middleware
 app.use(require('flash')())
 app.use(function (req, res, next) {
-    // if there's a flash message, transfer
-    // it to the context, then clear it
+
+  // Since passport flash is not working, we will
+  // pass data session and set from flash here
+  // then delete the data from session
+  if (req.session.loginFlash) {
+    req.flash(
+      req.session.loginFlash.type,
+      req.session.loginFlash.message
+    )
+    delete req.session.loginFlash
+  }
+
+  // if there's a flash message, transfer
+  // it to the context, then clear it
   res.locals.flash = req.session.flash
   if (req.session.flash) {
     delete req.session.flash
@@ -107,19 +102,43 @@ passport.use('login', new LocalStrategy({
   passReqToCallback: true
 },
 function (req, email, password, cb) {
-  User.findOne({
-    where: {
-      email: email,
-      password: password
+  // Validating before querying
+  if (email === '') {
+    req.session.loginFlash = {
+      type: 'loginStatus',
+      message: 'Email provided is empty'
     }
-  }).then(function (user) {
-    let userData = JSON.stringify(user)
-    if (userData !== 'null') {
-      return cb(null, user)
-    } else {
-      return cb(null, false)
+    return cb(null, false)
+  }
+
+  if (password === '') {
+    req.session.loginFlash = {
+      type: 'loginStatus',
+      message: 'Password provided is empty'
     }
-  })
+    return cb(null, false)
+  }
+
+  if (email && passport) {
+    User.findOne({
+      where: {
+        email: email,
+        password: password
+      }
+    }).then(function (user) {
+      let userData = JSON.stringify(user)
+      if (userData !== 'null') {      
+        return cb(null, user)
+      } else {
+        // Setting login status since passport flash is not working
+        req.session.loginFlash = {
+          type: 'loginStatus',
+          message: 'Incorrect username or password.'
+        }
+        return cb(null, false)
+      }
+    })
+  }
 }))
 
 // Configure Passport authenticated session persistence.
