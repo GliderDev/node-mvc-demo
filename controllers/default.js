@@ -16,8 +16,11 @@ module.exports.controller = function (app) {
     auth.ensureLogin,
     function (req, res) {
       var user = req.user.first_name
+      var userPic = req.user.profile_pic
       res.render(ctrlName + '/index', {
-        user: user
+        user: user,
+        userPic: userPic
+        
       })
     })
 } // End of Default Controller

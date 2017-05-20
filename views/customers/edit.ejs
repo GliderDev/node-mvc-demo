@@ -2,81 +2,97 @@
 <%- include('./../layouts/dashboard/sidebar', {title}) %>
 
 
-<section class="content">
-    <div class="row">
-      <!-- left column -->
-      <div class="col-md-6">
-        <!-- general form elements -->
-        <div class="box box-primary">
-                      
-            <form role="form" method="post" action="/customers/edit/<%=data[0].user_id%>" enctype="multipart/form-data">
-                <div class="box-body">
 
-                        <div class="form-group">
-                            <label for="f_name">First Name</label>
-                            <input type="text" class="form-control" id="f_name" name="f_name" 
-                                   value="<%=data[0].first_name%>" required>
-                        </div>
 
-                        <div class="form-group">
-                            <label for="l_name">Last Name</label>
-                            <input type="text" class="form-control" id="l_name" name="l_name" 
-                                   value="<%=data[0].last_name%>" required>
-                        </div>
+<aside class="right-side">
 
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="text" class="form-control" id="email" name="email" 
-                                   value="<%=data[0].email%>" required>
-                        </div>
+    <section class="content-header">
+                    <h1>
+                        Edit Customers
+                        <small>Control panel</small>
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                        <li class="active">Edit Customers</li>
+                    </ol>
+    </section>
 
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" 
-                                   value="<%=data[0].password%>" required>
-                        </div>
+    <section class="content">
+        <div class="row">
+          <!-- left column -->
+          <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                          
+                <form role="form" method="post" action="/customers/edit/<%=data[0].user_id%>" enctype="multipart/form-data">
+                    <div class="box-body">
 
-                        <div class="form-group">
-                            <% 
-                                  var dobFormat = dateTime.create(data[0].dob);
-                                  var dob = dobFormat.format('Y-m-d');
-                            %> 
-                            <label for="password">Date of Birth</label>
-                            <input type="text" class="form-control" id="dob" name="dob" 
-                                   value="<%=dob %>" required>
-                        </div>
+                            <div class="form-group">
+                                <label for="f_name">First Name</label>
+                                <input type="text" class="form-control" id="f_name" name="f_name" 
+                                       value="<%=data[0].first_name%>" required>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <input type="text" class="form-control" id="phone" name="phone" 
-                                   value="<%=data[0].phone%>" required>
-                        </div>
+                            <div class="form-group">
+                                <label for="l_name">Last Name</label>
+                                <input type="text" class="form-control" id="l_name" name="l_name" 
+                                       value="<%=data[0].last_name%>" required>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="phone">Employee Code</label>
-                            <input type="text" class="form-control" id="empcode" name="empcode" 
-                                   value="<%=data[0].emp_code%>" required>
-                        </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="text" class="form-control" id="email" name="email" 
+                                       value="<%=data[0].email%>" required>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="uploads">File Uploads</label>
-                            <input type="file" id="uploads" name="uploads" >
-                        </div>
-                        
-                </div>   
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" 
+                                       value="<%=data[0].password%>" required>
+                            </div>
 
-                <div class="box-footer">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                        <input type="button" class="btn btn-warning" value="Cancel"></input>
-                </div>
+                            <div class="form-group">
+                                <% 
+                                      var dobFormat = dateTime.create(data[0].dob);
+                                      var dob = dobFormat.format('Y-m-d');
+                                %> 
+                                <label for="password">Date of Birth</label>
+                                <input type="text" class="form-control" id="dob" name="dob" 
+                                       value="<%=dob %>" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="text" class="form-control" id="phone" name="phone" 
+                                       value="<%=data[0].phone%>" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone">Employee Code</label>
+                                <input type="text" class="form-control" id="empcode" name="empcode" 
+                                       value="<%=data[0].emp_code%>" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="uploads">File Uploads</label>
+                                <input type="file" id="uploads" name="uploads" >
+                            </div>
+                            
+                    </div>   
+
+                    <div class="box-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <input type="button" class="btn btn-warning" value="Cancel"></input>
+                    </div>
+                    
+                </form>
                 
-            </form>
-            
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
 
-</section>
+    </section>
+</aside>
         
 
 <%- include('./../layouts/dashboard/footer') %>
