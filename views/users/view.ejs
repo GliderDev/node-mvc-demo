@@ -1,0 +1,81 @@
+
+<%- include('./../layouts/dashboard/header', {title, href}) %>
+<%- include('./../layouts/dashboard/sidebar', {title}) %>
+
+<aside class="right-side">
+
+    <section class="content-header">
+                    <h1>
+                        View Users
+                        <small>Control panel</small>
+                    </h1> 
+                    <ol class="breadcrumb">
+                        <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                        <li class="active">View Users</li>
+                    </ol>
+    </section>
+
+    <div class="box">
+        <div class="box-header">
+            <h3 class="box-title">Data Table With Full Features</h3>
+        </div><!-- /.box-header -->
+
+        <div class="box-body table-responsive">
+            <table id="example2" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Date of Birth</th>
+                        <th>Employee Code</th>
+                        <th>Phone Number</th>
+                        <th>Uploads</th>                                                
+                    </tr>
+                </thead>
+                                            
+                <tbody>
+
+                    <%                     
+                         if(data.length){ 
+                                    
+                                for(var i = 0;i < data.length;i++) { 
+
+                                    var dobFormat =  dateTime.create(data[i].dob);
+                                    var dob =  dobFormat.format('Y-m-d');
+
+                    %>
+                    <tr>
+                                                    
+                        <td><%=data[i].first_name%></td>
+                        <td><%=data[i].last_name%></td>
+                        <td><%=data[i].email%></td>
+                        <td><%=dob%></td>
+                        <td><%=data[i].emp_code%></td>
+                        <td><%=data[i].phone%></td>
+                        <td><%=data[i].profile_pic%></td>
+                                                    
+                        <td>
+                            <a class="a-inside edit" href="../users/edit/<%=data[i].user_id%>">Edit</a>    <a class="a-inside delete" href="../users/delete/<%=data[i].user_id%>">Del</a>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+                                            
+                    <% }
+                
+                    }else{ %>
+                    
+                    <tr>
+                        <td colspan="3">No user</td>
+                    </tr>
+
+                    <% } %>
+            </table>
+        </div><!-- /.box-body -->
+    </div><!-- /.box -->
+</aside>
+        
+
+<%- include('./../layouts/dashboard/footer') %>
