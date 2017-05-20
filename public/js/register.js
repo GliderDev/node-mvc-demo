@@ -1,11 +1,29 @@
+
 $(document).ready(function () {
-  $('#sign-in').click(function (event) {
+  $('#register-me').click(function (event) {
     event.preventDefault();
     
+    var fname = $('#f_name').val()
     var email = $('#email').val()
     var pass = $('#password').val()
-    // var rem = $('#remember').val()
+    var empcode = $('#empcode').val()
+    var uploads = $('#uploads').val()
+
     var error = false
+
+    if(fname === ''){
+      error = true
+      $('.f_name-error-msg').append(
+        "<p>First name can't be empty</p>"
+      ).removeClass('hide')
+    }
+
+    if(empcode === ''){
+      error = true
+      $('.empcode-error-msg').append(
+        "<p>Employee code can't be empty</p>"
+      ).removeClass('hide')
+    }
 
     if (email === '') {
       error = true
@@ -29,6 +47,13 @@ $(document).ready(function () {
       // validate-message validate-group
       $('.password-error-msg').append(
         "<p>Password can't be empty</p>"
+      ).removeClass('hide')
+    }
+
+    if(uploads === ''){
+      error = true
+      $('.uploads-error-msg').append(
+        "<p>Please upload a profile pic</p>"
       ).removeClass('hide')
     }
 

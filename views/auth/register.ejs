@@ -1,51 +1,68 @@
-<%- include('./../layouts/login/header') %>
+<%- include('./../layouts/register/header') %>
 <div class="form-box" id="login-box">
     <div class="header">Register New Membership</div>
-    <form action="/customers/add" enctype="multipart/form-data" method="post">
+    
+    <form action="/" enctype="multipart/form-data" method="post">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
         <div class="body bg-gray">
            
             <div class="form-group">
-                <input type="text" name="f_name" class="form-control" placeholder="First Name"/>
+                <input type="text" name="f_name"  id= "f_name" class="form-control" 
+                       placeholder="First Name"/>
+                <div class="f_name-error-msg alert-danger hide"></div>
+            </div> 
+
+            <div class="form-group">
+                <input type="text" name="l_name" id="l_name" class="form-control" 
+                       placeholder="Last Name"/>
+                <div class="l_name-error-msg alert-danger hide"></div>
             </div>
 
             <div class="form-group">
-                <input type="text" name="l_name" class="form-control" placeholder="Last Name"/>
+                <input type="text" name="email" id="email" class="form-control" 
+                       placeholder="Email ID"/>
+                <div class="email-error-msg alert-danger hide"></div>
             </div>
 
             <div class="form-group">
-                <input type="text" name="email" class="form-control" placeholder="Email ID"/>
+                <input type="password" name="password" id="password" class="form-control" 
+                       placeholder="Password"/>
+                <div class="password-error-msg alert-danger hide"></div>
             </div>
 
             <div class="form-group">
-                <input type="password" name="password" class="form-control" placeholder="Password"/>
+                <input type="text" name="dob" id="dob" class="form-control" 
+                       placeholder="YYYY/MM/DD"/>
+                <div class="dob-error-msg alert-danger hide"></div>
             </div>
 
             <div class="form-group">
-                <input type="text" name="dob" class="form-control" placeholder="Date of Birth"/>
+                <input type="text" name="phone" id="phone" class="form-control"     
+                       placeholder="Phone"/>
+                <div class="phone-error-msg alert-danger hide"></div>
             </div>
 
             <div class="form-group">
-                <input type="text" name="phone" class="form-control" placeholder="Phone"/>
+                <input type="text" name="empcode" id="empcode" class="form-control" 
+                       placeholder="Employee code"/>
+                <div class="empcode-error-msg alert-danger hide"></div>
             </div>
 
             <div class="form-group">
-                <input type="text" name="empcode" class="form-control" placeholder="Employee code"/>
-            </div>
-
-            <div class="form-group">
-                <input type="file" name="uploads" class="form-control" placeholder="Upload File"/>
+                <input type="file" name="uploads" id="uploads" class="form-control" 
+                       placeholder="Upload File"/>
+                <div class="uploads-error-msg alert-danger hide"></div>
             </div>
 
 
         </div>
         <div class="footer">                    
 
-            <button type="submit" class="btn bg-olive btn-block">Sign me up</button>
+            <button type="submit" id="register-me" class="btn bg-olive btn-block">Sign me up</button>
 
             <a href="/auth/login" class="text-center">I already have a membership</a>
         </div>
     </form>
 
 </div>
-<%- include('./../layouts/login/footer') %>
+<%- include('./../layouts/register/footer') %>
