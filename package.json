@@ -12,6 +12,8 @@
   "dependencies": {
     "acl": "^0.4.10",
     "acl-sequelize": "^0.1.2",
+    "async": "^2.4.0",
+    "bcrypt": "^1.0.2",
     "body-parser": "^1.17.1",
     "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-beta.1",
@@ -24,6 +26,7 @@
     "flash": "^1.1.0",
     "mysql": "^2.13.0",
     "node-datetime": "^1.0.0",
+    "nodemailer": "^4.0.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "sequelize": "^3.30.4"
@@ -32,6 +35,8 @@
     "nodemon": "^1.11.0"
   },
   "standard": {
-    "globals": [ "$" ]
+    "globals": [
+      "$"
+    ]
   }
 }

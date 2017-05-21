@@ -18,13 +18,12 @@ var csrf = require('csurf')
 var passport = require('passport')
 var LocalStrategy = require('passport-local')
 var expressFileUpload = require('express-fileupload')
-
-// Including local modules
-var userModel = require('./models/User')
+var bcrypt = require('bcrypt')
 
 // Configuring  csrf and bodyParser middlewares
 var csrfProtection = csrf({ cookie: true })
 var parseForm = bodyParser.urlencoded({ extended: false })
+var config = require('./lib/config')
 
 // ======================== RBAC Configuring ========================
 
@@ -36,7 +35,7 @@ var parseForm = bodyParser.urlencoded({ extended: false })
 var app = express()
 
 // Sets Port number as 3000 if not provided
-app.set('port', process.env.PORT || 3000)
+app.set('port', process.env.PORT || config.ServerPort)
 
 // Sets View Engine
 app.set('view engine', 'ejs')
@@ -46,24 +45,13 @@ app.set('views', path.join(__dirname, '/views'))
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Database connection string
-app.use(
-    connection(mysql, {
-      host: 'localhost',
-      user: 'root',
-      password: 'pass',
-      port: 3306,
-      database: 'dmcoderepo'
-    })
-)
+app.use(connection(mysql, config.db))
 
 // Adding CSRF middleware
 app.use(cookieParser())
 
-app.use(session({
-  secret: 'pass',
-  resave: true,
-  saveUninitialized: true
-}))
+// Setting Session
+app.use(session(config.session))
 
 app.locals.csrfProtection = csrfProtection
 app.locals.parseForm = parseForm
@@ -74,16 +62,15 @@ app.use(expressFileUpload())
 // flash message middleware
 app.use(require('flash')())
 app.use(function (req, res, next) {
-
   // Since passport flash is not working, we will
   // pass data session and set from flash here
   // then delete the data from session
-  if (req.session.loginFlash) {
+  if (req.session.authFlash) {
     req.flash(
-      req.session.loginFlash.type,
-      req.session.loginFlash.message
+      req.session.authFlash.type,
+      req.session.authFlash.message
     )
-    delete req.session.loginFlash
+    delete req.session.authFlash
   }
 
   // if there's a flash message, transfer
@@ -104,7 +91,7 @@ passport.use('login', new LocalStrategy({
 function (req, email, password, cb) {
   // Validating before querying
   if (email === '') {
-    req.session.loginFlash = {
+    req.session.authFlash = {
       type: 'loginStatus',
       message: 'Email provided is empty'
     }
@@ -112,26 +99,43 @@ function (req, email, password, cb) {
   }
 
   if (password === '') {
-    req.session.loginFlash = {
+    req.session.authFlash = {
       type: 'loginStatus',
       message: 'Password provided is empty'
     }
     return cb(null, false)
   }
 
-  if (email && passport) {
+  if (email && password) {
     User.findOne({
       where: {
-        email: email,
-        password: password
+        email: email
       }
     }).then(function (user) {
       let userData = JSON.stringify(user)
-      if (userData !== 'null') {      
-        return cb(null, user)
+      if (userData !== 'null') {
+        bcrypt.compare(password, user.password, function (err, res) {
+          if (err) {
+            console.log(err)
+            req.session.authFlash = {
+              type: 'loginStatus',
+              message: 'Sorry, Error occurred during password verification'
+            }
+            return cb(null, false)
+          }
+          if (res) {
+            return cb(null, user)
+          } else {
+            req.session.authFlash = {
+              type: 'loginStatus',
+              message: 'Incorrect password'
+            }
+            return cb(null, false)
+          }
+        })
       } else {
         // Setting login status since passport flash is not working
-        req.session.loginFlash = {
+        req.session.authFlash = {
           type: 'loginStatus',
           message: 'Incorrect username or password.'
         }

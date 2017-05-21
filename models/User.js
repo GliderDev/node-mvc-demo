@@ -1,22 +1,3 @@
-// Sample user data
-var records = [
-    { 
-        id            : 1
-        , username    : 'tyson'
-        , password    : 'pass'
-        , displayName : 'Tyson Paul'
-        , email       : 'tyson@mail.com' 
-    }
-  , { 
-        id            : 2
-        , username    : 'srikanth'
-        , password    : 'pass@123'
-        , displayName : 'Srikanth Kamath'
-        , email       : 'srikanth@mail.com' 
-    }
-];
-
-
 /**
  * Public function findById
  *

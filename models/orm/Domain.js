@@ -1,9 +1,14 @@
+var config = require('../../lib/config')
 var Sequelize = require('sequelize')
 
-var sequelize = new Sequelize('dmcoderepo', 'root', 'pass', {
-  // Disables console logging queries
-  logging: false
-})
+var sequelize = new Sequelize(
+  config.orm.db,
+  config.orm.user,
+  config.orm.password, {
+    // Disables console logging queries
+    logging: false
+  }
+)
 
 var Domain = sequelize.define('domain', {
   domain_id: {

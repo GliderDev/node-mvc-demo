@@ -2,16 +2,21 @@
 <div class="form-box" id="login-box">
     <div class="header">Reset your password</div>
 
-    <form action="/auth/login" method="post">
-          
+    <form id="forgot-form" action="/auth/forgot" method="post">
         <div class="body bg-gray">
+            <div class="form-group validate-group <% if (message === ''){ %>hide<% } %>">
+                <div class="alert alert-<% if(type === 'fail') {%>danger<% } else { %>success<% } %>">
+                    <div id="validate-message"><%= message %></div>
+                </div>
+            </div>
             <div class="form-group">
                 <input type="hidden" name="_csrf" value="<%= csrf %>"><br/>
-                <input type="text" name="email" class="form-control" placeholder="email"/>
+                <input type="text" id="email" name="email" class="form-control" placeholder="email"/>
+                <div class="email-error-msg alert-danger hide"></div>
             </div>
         </div>
         <div class="footer">                                                               
-            <button type="submit" class="btn bg-olive btn-block">Submit</button>
+            <button type="submit" id="forgot" class="btn bg-olive btn-block">Submit</button>
 
             <a href="/auth/login" class="text-center">Sign In</a>  
         </div>

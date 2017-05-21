@@ -1,0 +1,29 @@
+<%- include('./../layouts/login/header') %>
+<div class="form-box" id="login-box">
+    <div class="header">Password Reset</div>
+
+    <form id="reset-password-form" action="/auth/reset" method="post">   
+      <div class="body bg-gray">
+        <div class="form-group validate-group <% if (message === ''){ %>hide<% } %>">
+          <div class="alert alert-<% if(type === 'fail') {%>danger<% } else { %>success<% } %>">
+              <div id="validate-message"><%= message %></div>
+          </div>
+        </div>
+        <div class="form-group <% if(type === 'fail') { %>hide<% } %>">
+          <div class="new-password-error-msg alert-danger hide"></div>
+          <input type="hidden" name="_csrf" value="<%= csrf %>"><br/>
+          <input type="hidden" name="resetToken" value="<%= token %>"><br/>
+          <input type="password" id="new-password" name="password" class="form-control" placeholder="New password"/>
+        </div>
+        <div class="form-group <% if(type === 'fail') { %>hide<% } %>">
+          <input type="password" id="confirm-password" name="confirmPassword" class="form-control" placeholder="Confirm Password"/>
+        </div>
+      </div>
+      <div class="footer">                                                               
+          <button type="submit" id="reset-password" class="btn bg-olive btn-block <% if(type === 'fail') { %>hide<% } %>">Change</button>  
+          <p><a href="/auth/forgot">I forgot my password</a></p>
+          <p><a href="/auth/login">Sign in</a></p>
+      </div>
+    </form>
+</div>
+<%- include('./../layouts/login/footer') %>
