@@ -1,7 +1,7 @@
 {
-  "name": "test",
+  "name": "dmcoderepo.com",
   "version": "1.0.0",
-  "description": "test project",
+  "description": "dmcoderepo",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -29,7 +29,8 @@
     "nodemailer": "^4.0.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
-    "sequelize": "^3.30.4"
+    "sequelize": "^3.30.4",
+    "vhost": "^3.0.2"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

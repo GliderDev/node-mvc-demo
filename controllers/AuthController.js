@@ -6,7 +6,6 @@
 
 var auth = require('../models/Auth')
 var flashHelper = require('../lib/flashHelper')
-var User = require('../models/orm/User')
 
 // Module definition
 module.exports.controller = function (app) {
@@ -17,10 +16,18 @@ module.exports.controller = function (app) {
 
   // HTTP GET - login page route
   app.get('/auth/login', csrfMiddleware, function (req, res) {
-    let message = flashHelper.getFlash(res, 'loginStatus')
-    let type = 'fail'
+    let message = ''
+    let type = ''
+    let loginSuccessMsg = flashHelper.getFlash(res, 'loginSuccessStatus')
+    let loginFailMsg = flashHelper.getFlash(res, 'loginStatus')
 
-    if (req.session.resetSuccessStatus) {
+    if (loginSuccessMsg) {
+      message = loginSuccessMsg
+      type = 'success'
+    } else if (loginFailMsg) {
+      message = flashHelper.getFlash(res, 'loginStatus')
+      type = 'fail'
+    } else if (req.session.resetSuccessStatus) {
       type = 'success'
       message = req.session.resetSuccessStatus.message
     }
@@ -56,9 +63,14 @@ module.exports.controller = function (app) {
   // HTTP GET - Register page route
   app.get('/auth/register', csrfMiddleware, function (req, res) {
     res.render('auth/register', {
-      csrf: req.csrfToken()
+      csrf: req.csrfToken(),
+      type: '',
+      message: ''
     })
   })
+
+  // HTTP POST - Register form processing page route
+  app.post('/auth/register', csrfMiddleware, parseForm, auth.registerUser)
 
   // HTTP GET - Forgot password page route
   app.get('/auth/forgot', csrfMiddleware, function (req, res) {
@@ -103,7 +115,7 @@ module.exports.controller = function (app) {
     }
   )
 
-  // HTTP POST - forgot password form process page route
+  // HTTP POST - reset password form process page route
   app.post('/auth/reset',
     parseForm, csrfMiddleware,
     auth.resetPassword

@@ -128,7 +128,7 @@ var forgotPassword = function (req, res) {
   ], function (err) {
     if (err) {
       // Intentionally left blank since in error and success cases,
-      // page has to redirect to forgot passowrd page.
+      // page has to redirect to forgot password page.
     }
 
     res.redirect('/auth/forgot')
@@ -258,8 +258,57 @@ var resetPassword = function (req, res) {
   }
 }
 
+/**
+ * To Register new user
+ *
+ * @param {object} req  Request object
+ * @param {object} res  Response object
+ */
+var registerUser = function (req, res) {
+  let firstName = req.body.f_name
+  let lastName = req.body.l_name
+  let email = req.body.email
+  let password = req.body.password
+  let dob = req.body.dob
+  let phone = req.body.phone
+  let empcode = req.body.empcode
+  let imgObj = req.files.uploads
+  let profilePic = imgObj.name
+  let path = require('path')
+  let bcrypt = require('bcrypt')
+
+  // Uploading image to /public/uploads directory
+  imgObj.mv(path.join(__dirname, '/../public/uploads/', profilePic), function (err) {
+    if (err) { new Error('error while uploading file ' + err) }
+  })
+
+  bcrypt.hash(password, config.passwordSaltRounds, function (err, hash) {
+    if (err) new Error('error while encrypting password ' + err)
+
+    // Inserting User data
+    User.create({
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      password: hash,
+      dob: dob,
+      phone: phone,
+      emp_code: empcode,
+      profile_pic: profilePic,
+      status: 1
+    }).then(function (user) {
+      req.session.authFlash = {
+        type: 'loginSuccessStatus',
+        message: 'Registration done successfully, Please login to continue'
+      }
+      res.redirect('/auth/login')
+    })
+  })
+}
+
 module.exports.rememberMe = rememberMe
 module.exports.ensureLogin = ensureLogin
 module.exports.forgotPassword = forgotPassword
 module.exports.validatePasswordResetToken = validatePasswordResetToken
 module.exports.resetPassword = resetPassword
+module.exports.registerUser = registerUser

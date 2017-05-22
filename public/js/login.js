@@ -48,6 +48,69 @@ $(document).ready(function () {
       $('#reset-password-form').submit()
     }
   })
+
+  // Registration page validation
+  $('#register-me').click(function (event) {
+    event.preventDefault()
+
+    var fname = $('#f_name').val()
+    var email = $('#email').val()
+    var pass = $('#password').val()
+    var empcode = $('#empcode').val()
+    var uploads = $('#uploads').val()
+
+    var error = false
+
+    if (fname === '') {
+      error = true
+      $('.f_name-error-msg').html(
+        "<p>First name can't be empty</p>"
+      ).removeClass('hide')
+    }
+
+    if (empcode === '') {
+      error = true
+      $('.empcode-error-msg').html(
+        "<p>Employee code can't be empty</p>"
+      ).removeClass('hide')
+    }
+
+    // Validates email
+    error = validateEmail(email)
+
+    if (pass === '') {
+      error = true
+      $('.password-error-msg').html(
+        "<p>Password can't be empty</p>"
+      ).removeClass('hide')
+    } else if (pass.length < 6) {
+      error = true
+      $('.password-error-msg').html(
+        '<p>Password must be at least 8 characters</p>'
+      ).removeClass('hide')
+    }
+
+    if (uploads.length) {
+      var fileSize = $('#uploads')[0].files[0].size
+      var fileData = uploads.split('.')
+      var fileExtension = fileData[fileData.length - 1]
+      if (!fileExtension.match('(jpg|jpeg|png)')) {
+        error = true
+        $('.uploads-error-msg').html(
+          '<p>Invalid Image extension. Allowed formats are jpg, jpeg and png</p>'
+        ).removeClass('hide')
+      } else if (fileSize > 2097152) {
+        error = true
+        $('.uploads-error-msg').html(
+          '<p>File size is greater than 2MB is not allowed</p>'
+        ).removeClass('hide')
+      } else {
+        $('.uploads-error-msg').addClass('hide')
+      }
+    }
+
+    if (!error) $('#register-form').submit()
+  })
 })
 
 /**

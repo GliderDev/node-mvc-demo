@@ -80,6 +80,22 @@ var app = express()
 //   console.log(userObj.last_name)
 // })
 
+// Encrypt all user passwords
+// var config = require('./lib/config')
+// var User = require('./models/orm/User')
+// var bcrypt = require('bcrypt')
+// User.findAll().then(function (users) {
+//   users.forEach(function (userObj) {
+//     bcrypt.hash(userObj.password, config.passwordSaltRounds, function (err, hash) {
+//       if (err) console.log(err)
+//       console.log(userObj.first_name + 'orginal Pass:' + userObj.password + 'new hash:' + hash )
+//       userObj.update({
+//         password: hash
+//       })
+//     })
+//   })
+// })
+
 // Starting the server
 app.listen(port, function () {
   console.log('ACL example listening on port ' + port)
