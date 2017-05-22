@@ -6,7 +6,7 @@ exports.list = function (req, res) {
 
   req.getConnection(function (err, connection) {
     connection.query('SELECT * FROM domain', function (err, rows) {
-      if (err)      {
+      if (err) {
         console.log('Error Selecting : %s ', err)
       }
       res.render('categories/view', { page_title: 'Categories - Node.js', data: rows })
