@@ -19,7 +19,12 @@ exports.list = function (req, res) {
 exports.add = function (req, res) {
   console.log('Add Categories  Page...')
 
-  res.render('categories/add', { page_title: 'Add Categories - Node.js' })
+  res.render('categories/add', {
+    title: req.user.first_name,
+    profilePic: req.user.profile_pic,
+    href: 'logout'
+
+  })
 }
 
 // Categories save functionality

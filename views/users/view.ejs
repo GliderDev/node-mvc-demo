@@ -47,16 +47,17 @@
                     %>
                     <tr>
                                                     
-                        <td><%=data[i].first_name%></td>
-                        <td><%=data[i].last_name%></td>
-                        <td><%=data[i].email%></td>
+                        <td><%=data[i].first_name %></td>
+                        <td><%=data[i].last_name %></td>
+                        <td><%=data[i].email %></td>
                         <td><%=dob%></td>
-                        <td><%=data[i].emp_code%></td>
-                        <td><%=data[i].phone%></td>
-                        <td><%=data[i].profile_pic%></td>
+                        <td><%=data[i].emp_code %></td>
+                        <td><%=data[i].phone %></td>
+                        <td><%=data[i].profile_pic %></td>
                                                     
                         <td>
-                            <a class="a-inside edit" href="../users/edit/<%=data[i].user_id%>">Edit</a>    <a class="a-inside delete" href="../users/delete/<%=data[i].user_id%>">Del</a>
+                            <a class="btn btn-primary" href="../users/edit/<%=data[i].user_id%>">Edit</a>
+                            <a class="btn btn-danger" href="../users/delete/<%=data[i].user_id%>">Delete</a>
                         </td>
 
                     </tr>

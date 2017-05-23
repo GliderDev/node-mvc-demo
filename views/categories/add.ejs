@@ -1,37 +1,55 @@
-<%- include ../../public/layout/header.ejs %>
-      
 
-        <div class="page-data">
-            
-            <form name= "myForm" method="post" action="/categories/add" >
-                <table cellpadding="11">
-                
-                <tr>
-                    <td class="label">Category Name</td>
-                    <td>: <input type="text" name="category_name" required></td>
-                </tr>
+<%- include('./../layouts/dashboard/header', {title, href}) %>
 
-                <tr>
-                    <td class="label">Description</td>
-                    <td>: <input type="text" name="description" ></td>
-                </tr>
+<%- include('./../layouts/dashboard/sidebar', {title}) %>
 
+<aside class="right-side">
 
-                <tr></tr>
-                <tr></tr>
+    <section class="content-header">
+                    <h1>
+                        Add Categories
+                        <small>Control panel</small>
+                    </h1> 
+                    <ol class="breadcrumb">
+                        <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                        <li class="active">Add Categories</li>
+                    </ol>
+    </section>
 
-                <tr>
-                    <td class="label"></td>
-                    <td>
-                        &nbsp; <input type="submit" name="submit" value="Save">
-                       <input type="button" name="cancel" value="Cancel" class="cancel" onClick="cancelAdd()">
-                    </td>
-                </tr>
+    <section class="content">
+        <div class="row">
+          <!-- left column -->
+          <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                          
 
-                </table>
-            </form>
-            
+                <form role="form" method="post" action="/categories/add">
+                     <div class="box-body">
+                        
+                            <div class="form-group">
+                                <label for="phone">Category Name</label>
+                                <input type="text" class="form-control" id="category_name" name="category_name"
+                                       placeholder="Enter Category Name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone">Description</label>
+                                <input type="text" class="form-control" id="description" name="description" placeholder="Enter Description">
+                            </div>
+
+                    </div><!-- /.box-body -->
+
+                    <div class="box-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <input type="button" class="btn btn-warning" value="Cancel"></input>
+                    </div>
+                </form>  
+            </div>
+          </div> 
         </div>
-        
+     
+     </section>     
 
-<%- include ../../public/layout/footer.ejs %>
+</aside>    
+<%- include('./../layouts/dashboard/footer') %>
