@@ -293,9 +293,6 @@ var registerUser = function (req, res) {
 
   bcrypt.hash(password, config.passwordSaltRounds, function (err, hash) {
     if (err) new Error('error while encrypting password ' + err)
-    let datetime = require('node-datetime')
-    let expiryTime = datetime.create(dob)
-    let fomratted = expiryTime.format('m/d/Y H:M:S')
     // Inserting User data
     User.create({
       first_name: firstName,
