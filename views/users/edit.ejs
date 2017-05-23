@@ -1,5 +1,5 @@
-<%- include('./../layouts/dashboard/header', {title, href}) %>
-<%- include('./../layouts/dashboard/sidebar', {title}) %>
+<%- include('./../layouts/dashboard/header') %>
+<%- include('./../layouts/dashboard/sidebar') %>
 
 
 
@@ -82,7 +82,7 @@
 
                     <div class="box-footer">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <input type="button" class="btn btn-warning" value="Cancel"></input>
+                            <input type="button" class="btn btn-warning" value="Cancel" onclick="cancelEdit()"></input>
                     </div>
                     
                 </form>

@@ -6,12 +6,12 @@
 					<div class="user-panel">
 												
 							<div class="pull-left image">
-									<img src="/uploads/<%=userPic %>" class="img-circle" />
+									<img src="/uploads/<%= profileImage %>" class="img-circle" />
 							</div>
 
 							<div class="pull-left info">
 									<p>
-											<h3><%=title %></h3>
+											<h3><%= userFirstName %></h3>
 									</p> 
 									<a href="#"><i class="fa fa-circle text-success"></i> Online</a>
 							</div>
@@ -20,13 +20,13 @@
                 
 					<!-- sidebar menu: : style can be found in sidebar.less -->
           <ul class="sidebar-menu">
-            <li class="active">
+            <li class="active" id="side-dashboard-tree">
 								<a href="/">
                   <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                 </a>
             </li>
                         
-            <li class="treeview">
+            <li class="treeview" id="side-user-tree">
                 <a href="#">
 									<i class="fa fa-user"></i>
 									<span>User Management</span>
@@ -39,13 +39,14 @@
                 </ul>
              </li>
                         
-             <li class="treeview">
-                 <a href="#">
+             <li class="treeview" id="side-domain-tree">
+                 <a href="#"> 
                     <i class="fa fa-laptop"></i> <span>Domain</span>
                     <i class="fa fa-angle-left pull-right"></i>
                  </a>
                             
-									<ul class="treeview-menu">
+				    <ul class="treeview-menu">
+                      <li><a href="/categories/create"><i class="fa fa-angle-double-right"></i> Create Category</a></li>
                       <li><a href="/categories/add"><i class="fa fa-angle-double-right"></i> Add Category</a></li>
                       <li><a href="/categories/view"><i class="fa fa-angle-double-right"></i> View Category</a></li>
                       <li><a href="/subcategory/add"><i class="fa fa-angle-double-right"></i> Add Sub Category</a></li>

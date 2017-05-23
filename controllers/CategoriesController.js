@@ -27,6 +27,10 @@ module.exports.controller = function (app) {
 
   // Categories Delete functionality
   app.get('/categories/delete/:domain_id', categoriesModel.delete_category)
+
+  app.get('/categories/create', categoriesModel.create_category)
+
+  app.post('/categories/create', categoriesModel.save_category)
 }
 
  // End of Categories Controller

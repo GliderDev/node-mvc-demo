@@ -25,6 +25,15 @@ var rememberMe = function (req, res, next) {
  */
 var ensureLogin = function (req, res, next) {
   if (req.isAuthenticated()) {
+    // Sets uses image to global variable
+    if (req.user.profile_pic !== null) {
+      req.app.locals.profileImage = req.user.profile_pic
+    } else {
+      req.app.locals.profileImage = 'user_avatar.png'
+    }
+
+    // Sets uses user first name to global variable
+    req.app.locals.userFirstName = req.user.first_name
     next()
   } else {
     res.redirect('/auth/login')
