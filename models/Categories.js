@@ -18,10 +18,12 @@ exports.list = function (req, res) {
 
 exports.add = function (req, res) {
   console.log('Add Categories  Page...')
+  var title = req.user.first_name
+  var profilePic = req.user.profile_pic
 
   res.render('categories/add', {
-    title: req.user.first_name,
-    profilePic: req.user.profile_pic,
+    title: title,
+    userPic: profilePic,
     href: 'logout'
 
   })
@@ -102,5 +104,29 @@ exports.delete_category = function (req, res) {
 
       res.redirect('/categories/view')
     })
+  })
+}
+
+exports.create_category = function (req, res) {
+  var title = req.user.first_name
+  var profilePic = req.user.profile_pic
+
+  res.render('categories/create', {
+    title: title,
+    userPic: profilePic,
+    href: 'logout'
+
+  })
+}
+
+exports.save_category = function (req, res) {
+  var title = req.user.first_name
+  var profilePic = req.user.profile_pic
+
+  res.render('categories/create', {
+    title: title,
+    userPic: profilePic,
+    href: 'logout'
+
   })
 }

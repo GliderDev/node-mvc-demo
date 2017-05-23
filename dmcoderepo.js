@@ -76,6 +76,10 @@ app.use(function (req, res, next) {
 })
 
 // ======================== Authorization Configuration ======================
+
+var Domain = require('./models/orm/Domain')
+app.locals.Domain = Domain
+
 var User = require('./models/orm/User')
 app.locals.User = User
 // Configuring the local strategy for use by Passport.
