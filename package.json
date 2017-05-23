@@ -24,13 +24,15 @@
     "express-myconnection": "^1.0.4",
     "express-session": "^1.15.2",
     "flash": "^1.1.0",
+    "morgan": "^1.8.1",
     "mysql": "^2.13.0",
     "node-datetime": "^1.0.0",
     "nodemailer": "^4.0.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "sequelize": "^3.30.4",
-    "vhost": "^3.0.2"
+    "vhost": "^3.0.2",
+    "winston": "^2.3.1"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

@@ -30,6 +30,11 @@ var config = require('./lib/config')
 // Creating express object
 var app = express()
 
+// Setting Logger
+var logger = require('./lib/logger')
+logger.debug("Overriding 'Express' logger")
+app.use(require('morgan')('combined', { 'stream': logger.stream }))
+
 // Sets View Engine
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '/views'))

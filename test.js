@@ -96,6 +96,19 @@ var app = express()
 //   })
 // })
 
+// Date Formatting
+// let datetime = require('node-datetime')
+// let expiryTime = datetime.create('07/20/1989')
+// var fomratted = expiryTime.format('m/d/Y H:M:S')
+// console.log(fomratted)
+
+// Logging
+var logger = require('./lib/logger')
+logger.debug("Overriding 'Express' logger")
+app.use(require('morgan')('combined', { 'stream': logger.stream }))
+
+
+
 // Starting the server
 app.listen(port, function () {
   console.log('ACL example listening on port ' + port)
