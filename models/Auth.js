@@ -282,14 +282,17 @@ var registerUser = function (req, res) {
   let phone = req.body.phone
   let empcode = req.body.empcode
   let imgObj = req.files.uploads
-  let profilePic = imgObj.name
+  let profilePic = ''
   let path = require('path')
   let bcrypt = require('bcrypt')
 
-  // Uploading image to /public/uploads directory
-  imgObj.mv(path.join(__dirname, '/../public/uploads/', profilePic), function (err) {
-    if (err) { new Error('error while uploading file ' + err) }
-  })
+  if (imgObj) {
+    profilePic = imgObj.name
+    // Uploading image to /public/uploads directory
+    imgObj.mv(path.join(__dirname, '/../public/uploads/', profilePic), function (err) {
+      if (err) { new Error('error while uploading file ' + err) }
+    })
+  }
 
   bcrypt.hash(password, config.passwordSaltRounds, function (err, hash) {
     if (err) new Error('error while encrypting password ' + err)

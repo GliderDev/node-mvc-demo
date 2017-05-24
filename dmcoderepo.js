@@ -5,22 +5,23 @@
  */
 
 // Including extra Packages
-var express = require('express')
-var mysql = require('mysql')
-var connection = require('express-myconnection')
-var path = require('path')
-var fs = require('fs')
-var cookieParser = require('cookie-parser')
-var session = require('express-session')
-var bodyParser = require('body-parser')
-var csrf = require('csurf')
-var passport = require('passport')
-var LocalStrategy = require('passport-local')
-var expressFileUpload = require('express-fileupload')
-var bcrypt = require('bcrypt')
-var Sequelize = require('sequelize')
-var Acl = require('acl')
-var AclSeq = require('acl-sequelize')
+var express = require('express') // Express Framework
+var mysql = require('mysql') // Mysql Driver
+var connection = require('express-myconnection') // Mysql Driver Helper
+var path = require('path') // Path creation helper
+var fs = require('fs') // File read and write helper
+var cookieParser = require('cookie-parser') // Cookie data parser
+var session = require('express-session') // Session Helper
+var bodyParser = require('body-parser') // HTTP POST data parser
+var csrf = require('csurf') // CSRF helper
+var passport = require('passport') // Authenication helper
+var LocalStrategy = require('passport-local') // Local Authenication helper
+var expressFileUpload = require('express-fileupload') // File upload helper
+var bcrypt = require('bcrypt') // Password encryption helper
+var Sequelize = require('sequelize') // ORM
+var Acl = require('acl') // RBAC Helper
+var AclSeq = require('acl-sequelize') // RBAC database helper
+var helmet = require('helmet') // HTTP header protection
 
 // Configuring  csrf and bodyParser middlewares
 var csrfProtection = csrf({ cookie: true })
@@ -30,9 +31,13 @@ var config = require('./lib/config')
 // Creating express object
 var app = express()
 
-// Setting Logger
+// Helmets middleware added to secure app
+// by setting various HTTP headers
+app.use(helmet())
+
+// Setting Loggers
 var logger = require('./lib/logger')
-logger.debug("Overriding 'Express' logger")
+app.locals.logger = logger
 app.use(require('morgan')('combined', { 'stream': logger.stream }))
 
 // Sets View Engine
@@ -119,7 +124,7 @@ function (req, email, password, cb) {
       if (userData !== 'null') {
         bcrypt.compare(password, user.password, function (err, res) {
           if (err) {
-            console.log(err)
+            logger.error(err)
             req.session.authFlash = {
               type: 'loginStatus',
               message: 'Sorry, Error occurred during password verification'
@@ -206,7 +211,7 @@ app.use(function (req, res, next) {
 
 // 500 error handler (middleware)
 app.use(function (err, req, res, next) {
-  console.error(err.stack)
+  logger.error(err.stack)
   res.status(500)
   res.render('500')
 })

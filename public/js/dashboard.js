@@ -5,13 +5,6 @@ function cancelEdit () {
   window.location.href = '/users/view'
 }
 
-function createDomain () {
-  // var domain = prompt('Please enter Category name', '')
-  // if (domain != null) {
-  //   $('#category-list').append('<option value=' + domain + '>' + domain + '</option>')
-  // }
-}
-
 $(document).ready(function () {
   $('#submitBtn').click(function (event) {
     event.preventDefault()
@@ -73,6 +66,40 @@ $(document).ready(function () {
     }
 
     if (!error) $('#userForm').submit()
+  })
+
+  $('#category-list').on('change', function () {
+    var value = this.value
+    if (value === 'createNew') {
+      $('#create-category').modal()
+      $('#modalSave').click(function (event) {
+        event.preventDefault()
+        var title = $('#category_name').val()
+        var description = $('#category_desc').val()
+        if (title !== '' && description !== '') {
+          $.ajax({
+            type: 'POST',
+            url: '/categories/create',
+            data: {title: title, description: description},
+            cache: false,
+            success: function (optionData) {
+              if (!optionData.error && optionData.data.html.length) {
+                var id = optionData.data.id
+                $('#category-list').html(optionData.data.html)
+                $('.cat_' + id).attr('selected', true)
+                window.alert('success')
+              } else {
+                $('.cat_default').attr('selected', true)
+              }
+            },
+            error: function (error) {
+              console.log('error')
+              window.alert('error' + error)
+            }
+          })
+        }
+      })
+    }
   })
 })
 
