@@ -31,26 +31,23 @@
                         
                            <div class="form-group">
                                 <label>Main category</label>
-
+                        
                                 <select class="form-control" name="category-list" id="category-list">
-																		<option value="">--Select category--</option>
-                                    <option>PHP</option>
-                                    <option>ASP.net</option>						
-																		<option value="createNew" data-toggle="modal"
-																					  data-target="#myModal" >--Create new--</option>
+																		<option class="cat_default" value="">--Select category--</option>
+                                    <%- html %>		
+																		<option class="cat_new" value="createNew">--Create new--</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label>Sub category</label>
-                                <select class="form-control" name="category-list" id="category-list">
-																		<option value="">--Select subcategory--</option>
-                                    <option>Yii</option>
-                                    <option>Yii2</option>
-																		<option>Error handling</option>
+                                <select class="form-control" name="sub-category-list" id="sub-category-list">
+																	<option class="sub_cat_default" value="">--Select Sub Category--</option>
+                                  		
+																	<option class="sub_cat_new" value="createNew">--Create new--</option>
                                 </select>                            
 														</div>
-
+0
 														<div class="form-group">
                                 <label>Title</label>
                                 <input type="text" class="form-control" id="title" name="title" 
@@ -84,7 +81,7 @@
 </aside>   
 
 
-<div class="modal fade" id="myModal" role="dialog">
+<div class="modal fade" id="create-category" role="dialog">
     <div class="modal-dialog">
     
       <!-- Modal content-->
@@ -105,14 +102,14 @@
 
                                 <div class="form-group">
                                     <label>Category Description</label>
-                                    <textarea class="form-control" rows="3" 
+                                    <textarea class="form-control" rows="3" id="category_desc" 
                                               placeholder="Enter ..."></textarea>
                                 </div>
               </div>
           </form>
         </div>
         <div class="modal-footer">
-					<button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+					<button type="button" id="modalSave" class="btn btn-success" data-dismiss="modal">Save</button>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
