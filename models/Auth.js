@@ -308,6 +308,9 @@ var registerUser = function (req, res) {
       profile_pic: profilePic,
       status: 1
     }).then(function (user) {
+      // Add new user with User role
+      req.app.locals.acl.addUserRoles(user.user_id, 'user')
+
       req.session.authFlash = {
         type: 'loginSuccessStatus',
         message: 'Registration done successfully, Please login to continue'

@@ -181,7 +181,7 @@ app.use(passport.session())
 app.locals.passport = passport
 
 // ======================== RBAC Configuring ========================
-var connection = new Sequelize(
+var ormConnection = new Sequelize(
     config.orm.db,
     config.orm.user,
     config.orm.password, {
@@ -189,11 +189,11 @@ var connection = new Sequelize(
       logging: false
     }
 )
-var acl = new Acl(new AclSeq(connection, { prefix: 'acl_' }))
+var acl = new Acl(new AclSeq(ormConnection, { prefix: 'acl_' }))
 app.locals.acl = acl
-// rbac = require('./models/Rbac');
+// var rbac = require('./models/Rbac')
 // need to run only once to create permissions
-// rbac.setRole();
+// rbac.setRole(acl)
 
 // dynamically include routes (Controller)
 fs.readdirSync('./controllers').forEach(function (file) {

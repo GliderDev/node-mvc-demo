@@ -85,4 +85,86 @@ module.exports.controller = function (app) {
       }
     })
   })
+
+  /**
+   * HTTP GET - To show user role
+   */
+  app.get('/rbac/user-role', auth.ensureLogin, function (req, res) {
+    app.locals.acl.userRoles(req.user.user_id, function (err, roles) {
+      if (err) {
+        res.json({
+          error: true,
+          message: 'Sorry an error occurred while determining user role'
+        })
+      }
+      // Returns user role
+      if (roles.length) {
+        res.json({
+          error: false,
+          data: {role: roles[0]}
+        })
+      } else {
+        res.json({
+          error: true,
+          message: 'user has not assigned any roles,' +
+            ' Please contact you Administrator'
+        })
+      }
+    })
+  })
+}
+
+/**
+ * To check the given access role against given user id
+ * Returns true if user has role, else returns false
+ * @param  {object}  acl
+ * @param  {integer} userId
+ * @param  {string}  role
+ * @return {boolean}
+ */
+function checkAccess (acl, userId, role) {
+  let responseData = {}
+
+  if (!acl) {
+    responseData.error = true
+    responseData.message = 'acl is undefined'
+    return responseData
+  }
+
+  if (typeof (userId) === 'undefined' ||
+      userId === null ||
+      userId.length === 0
+  ) {
+    responseData.error = true
+    responseData.message = 'user id provided is either empty or undefined'
+    return responseData
+  }
+
+  if (typeof (role) === 'undefined' ||
+    role === null ||
+    role.length === 0
+  ) {
+    responseData.error = true
+    responseData.message = 'user role provided is either empty or undefined'
+    return responseData
+  }
+
+  acl.hasRole(userId, role, function (err, hasRole) {
+    if (err) {
+      responseData.error = true
+      responseData.message = 'Error occured while checking user role, ' +
+        'Please try again later'
+      return responseData
+    }
+
+    if (hasRole) {
+      responseData.error = false
+      responseData.data = {hasRole: true}
+      return responseData
+    } else {
+      responseData.error = false
+      responseData.data = {hasRole: false}
+      return responseData
+    }
+  })
 }

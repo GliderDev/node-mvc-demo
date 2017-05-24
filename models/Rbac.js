@@ -32,6 +32,9 @@ module.exports.setRole = function (acl) {
   // Inherit roles
   //  Every admin is allowed to do what users do
   acl.addRoleParents('admin', 'user')
+  acl.addUserRoles(1, 'admin')
+  acl.addUserRoles(2, 'user')
+  acl.addUserRoles(3, 'user')
 }
 
 /**

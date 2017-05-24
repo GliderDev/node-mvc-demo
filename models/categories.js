@@ -107,26 +107,73 @@ exports.delete_category = function (req, res) {
   })
 }
 
-exports.create_category = function (req, res) {
-  var title = req.user.first_name
-  var profilePic = req.user.profile_pic
-
-  res.render('categories/create', {
-    title: title,
-    userPic: profilePic,
-    href: 'logout'
-
+exports.create_category = function (req, res, next) {
+  let domain = req.app.locals.Domain
+  domain.findAll({
+    attribute: 'domain'
+  }).then(function (result) {
+    if (result) {
+      let html = generateOptions(result)
+      res.render('categories/create', {
+        href: 'logout',
+        title: 'ytets',
+        html: html
+      })
+    } else {
+      req.app.locals.logger.error('Domain is empty')
+      next()
+    }
   })
 }
 
 exports.save_category = function (req, res) {
-  var title = req.user.first_name
-  var profilePic = req.user.profile_pic
+  console.log(req.body)
 
-  res.render('categories/create', {
-    title: title,
-    userPic: profilePic,
-    href: 'logout'
+  req.getConnection(function (err, connection) {
+    var data = {
+      domain: req.body.title,
+      description: req.body.description
+    }
 
+    req.app.locals.Domain.create(data).then(function (domainData) {
+      console.log(domainData)
+
+      let domain = req.app.locals.Domain
+      domain.findAll({
+        attribute: 'domain'
+      }).then(function (allDomain) {
+        let allDomainHtml = '<option class="cat_default" value="">' +
+          '--Select category--</option>' +
+          generateOptions(allDomain) + 
+          '<option class="cat_new" value="createNew">' +
+          '--Create new--</option>'
+
+        res.json({error: false,
+          data: {
+            id: domainData.domain_id,
+            html: allDomainHtml
+          }})
+      })
+    })
   })
+}
+
+function generateOptions (optionData) {
+  let html = ''
+
+  if (optionData.length) {
+    optionData.forEach(function (element) {
+      html += '<option ' +
+      'class="cat_' + element.domain_id + '"' +
+      ' value=' + element.domain_id + '>' +
+      element.domain + '</option>'
+    })
+  } else if (typeof (optionData) === 'object') {
+    html += '<option ' +
+      'class="cat_' + optionData.domain_id + '"' +
+      ' value=' + optionData.domain_id + '>' +
+      optionData.domain + '</option>'
+  }
+
+  return html
 }

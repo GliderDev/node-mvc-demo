@@ -2,20 +2,11 @@
 var dateTime = require('node-datetime')
 
 // Users list functionality
-
 exports.list = function (req, res) {
-  console.log('Users List...')
-
-  var title = req.user.first_name
-  var profilePic = req.user.profile_pic
-  var href = 'logout'
-
-  // if (profilePic.length < 1) { profilePic = '' }
-
   req.getConnection(function (err, connection) {
-    if (err) console.log(err)
+    if (err) req.app.locals.logger.error(err)
     connection.query('SELECT * FROM user', function (err, rows) {
-      if (err) { console.log('Error Selecting : %s ', err) }
+      if (err) { req.app.locals.logger.error('Error Selecting : %s ', err) }
       res.render('users/view', {
         page_title: 'Users - Node.js',
         data: rows,
@@ -26,37 +17,20 @@ exports.list = function (req, res) {
 }
 
 // Users add functionality
-
 exports.add = function (req, res) {
-  console.log('Add User  Page...')
-
-  var title = req.user.first_name
-  var profilePic = req.user.profile_pic
-  var href = 'logout'
-
-  // if (profilePic.length < 1) { profilePic = '' }
-
   res.render('users/add', {
     page_title: 'Add Users - Node.js'
   })
 }
 
 // Users list functionality
-
 exports.edit = function (req, res) {
-  console.log('Edit User  Page...')
-
-  var title = req.user.first_name
-  var profilePic = req.user.profile_pic
-  var href = 'logout'
-  var id = req.params.user_id
-
-  // if (profilePic.length < 1) profilePic = ''
+  let id = req.params.user_id
 
   req.getConnection(function (err, connection) {
-    if (err) console.log(err)
+    if (err) req.app.locals.logger.error(err)
     connection.query('SELECT * FROM user WHERE user_id = ?', [id], function (err, rows) {
-      if (err) { console.log('Error Selecting : %s ', err) }
+      if (err) { req.app.locals.logger.error('Error Selecting : %s ', err) }
 
       res.render('users/edit', {
         page_title: 'Edit Users - Node.js',
@@ -68,9 +42,8 @@ exports.edit = function (req, res) {
 }
 
 // Users save functionality
-
 exports.save = function (req, res) {
-  console.log('Save User to DB...')
+  req.app.locals.logger.info('Save User to DB...')
 
   var input = JSON.parse(JSON.stringify(req.body))
   var img = req.files.uploads
@@ -83,15 +56,17 @@ exports.save = function (req, res) {
   let path = require('path')
 
   req.getConnection(function (err, connection) {
-    if (err) console.log(err)
+    if (err) req.app.locals.logger.error(err)
+
+    let data
 
     if (typeof (img) !== 'undefined' && img !== null) {
         // Uploading image to /public/uploads directory
       img.mv(path.join(__dirname, '/../public/uploads/', img.name), function (err) {
-        if (err) console.log(err)
+        if (err) req.app.locals.logger.error(err)
       })
 
-      var data = {
+      data = {
         first_name: input.f_name,
         last_name: input.l_name,
         email: input.email,
@@ -106,7 +81,7 @@ exports.save = function (req, res) {
         profile_pic: img.name
       }
     } else {
-      var data = {
+      data = {
         first_name: input.f_name,
         last_name: input.l_name,
         email: input.email,
@@ -126,7 +101,7 @@ exports.save = function (req, res) {
           , data
           , function (err, rows) {
             if (err) {
-              console.log(err)
+              req.app.locals.logger.error(err)
             } else {
               res.redirect('/users/view')
             }
@@ -136,7 +111,6 @@ exports.save = function (req, res) {
 }
 
 // Users edit and save functionality
-
 exports.save_edit = function (req, res) {
   var input = JSON.parse(JSON.stringify(req.body))
   var id = req.params.user_id
@@ -151,15 +125,15 @@ exports.save_edit = function (req, res) {
   let path = require('path')
 
   req.getConnection(function (err, connection) {
-    if (err) console.log(err)
-
+    if (err) req.app.locals.logger.error(err)
+    let data
     if (typeof (img) !== 'undefined' && img !== null) {
          // Uploading image to /public/uploads directory
       img.mv(path.join(__dirname, '/../public/uploads/', img.name), function (err) {
-        if (err) console.log(err)
+        if (err) req.app.locals.logger.error(err)
       })
 
-      var data = {
+      data = {
         first_name: input.f_name,
         last_name: input.l_name,
         email: input.email,
@@ -174,7 +148,7 @@ exports.save_edit = function (req, res) {
         profile_pic: img.name
       }
     } else {
-      var data = {
+      data = {
         first_name: input.f_name,
         last_name: input.l_name,
         email: input.email,
@@ -190,7 +164,7 @@ exports.save_edit = function (req, res) {
     }
 
     connection.query('UPDATE user set ? WHERE user_id = ? ', [data, id], function (err, rows) {
-      if (err) { console.log('Error Updating : %s ', err) }
+      if (err) { req.app.locals.logger.error('Error Updating : %s ', err) }
 
       res.redirect('/users/view')
     })
@@ -198,16 +172,15 @@ exports.save_edit = function (req, res) {
 }
 
 // Users delete functionality
-
 exports.delete = function (req, res) {
   var id = req.params.user_id
 
-  console.log('Delete id = ' + id)
+  req.app.locals.logger.info('Delete id = ' + id)
 
   req.getConnection(function (err, connection) {
-    if (err) console.log(err)
+    if (err) req.app.locals.logger.error(err)
     connection.query('DELETE FROM user  WHERE user_id = ? ', [id], function (err, rows) {
-      if (err) { console.log('Error deleting : %s ', err) }
+      if (err) { req.app.locals.logger.error('Error deleting : %s ', err) }
 
       res.redirect('/users/view')
     })

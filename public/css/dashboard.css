@@ -1,0 +1,4 @@
+/*hide role-specific div html*/
+.admin-role, .user-role {
+  display: none;
+}
