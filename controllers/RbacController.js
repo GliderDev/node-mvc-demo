@@ -143,4 +143,48 @@ module.exports.controller = function (app) {
       })
     }
   )
+
+  /**
+   * HTTP GET- To show allowed permission of the user
+   */
+  app.get('/rbac/show-permission', function (req, res) {
+    req.app.locals.acl.allowedPermissions(
+      req.user.user_id,
+      ['user', 'rbac', '/', 'categories'],
+      function (err, obj) {
+        if (err) res.json(err)
+        res.json(obj)
+      }
+      )
+  })
+
+  /**
+   * HTTP GET - To check if user has access in given resource and permission
+   */
+  app.get('/rbac/allowed/:resource/:permission', function (req, res, next) {
+    req.app.locals.acl.isAllowed(
+      req.user.user_id,
+      req.params.resource,
+      req.params.permission,
+      function (err, isAllowed) {
+        if (err) {
+          req.app.locals.logger.error(JSON.stringify(err))
+          next(new Error(err))
+        }
+        res.json(isAllowed)
+        // Proceed to next middleware if allowed
+        // else redirect to dashboard
+        // if (isAllowed) {
+        //   next()
+        // } else {
+        //   req.flash(
+        //     'authError',
+        //     "You're not authorized to do this action"
+        //   )
+        //   console.log('here')
+        //   res.redirect('/')
+        // }
+      }
+    )
+  })
 }

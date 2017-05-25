@@ -19,12 +19,12 @@ module.exports.setRole = function (acl) {
     {
       roles: 'admin',
       allows: [
-        { resources: '/', permissions: '*' }
+        { resources: ['user', 'rbac'], permissions: ['*'] }
       ]
     }, {
       roles: 'user',
       allows: [
-        { resources: '/', permissions: ['view', 'create', 'edit'] }
+        { resources: ['/', 'categories'], permissions: ['view', 'create', 'edit'] }
       ]
     }
   ])
