@@ -3,11 +3,11 @@
  *
  * This controller is used group default route function
  */
-var auth = require('../models/Auth')
+var authHelper = require('../lib/authHelper')
 
 module.exports.controller = function (app) {
   // Home Page
-  app.get('/', auth.ensureLogin, function (req, res) {
+  app.get('/', authHelper.ensureAuth, function (req, res) {
     res.render('default/index')
   })
 } // End of Default Controller

@@ -43,8 +43,6 @@ exports.edit = function (req, res) {
 
 // Users save functionality
 exports.save = function (req, res) {
-  req.app.locals.logger.info('Save User to DB...')
-
   var input = JSON.parse(JSON.stringify(req.body))
   var img = req.files.uploads
 
@@ -175,13 +173,13 @@ exports.save_edit = function (req, res) {
 exports.delete = function (req, res) {
   var id = req.params.user_id
 
-  req.app.locals.logger.info('Delete id = ' + id)
-
   req.getConnection(function (err, connection) {
     if (err) req.app.locals.logger.error(err)
     connection.query('DELETE FROM user  WHERE user_id = ? ', [id], function (err, rows) {
       if (err) { req.app.locals.logger.error('Error deleting : %s ', err) }
 
+      // Removes User's role for RBAC tables
+      req.app.locals.acl.addUserRoles(id, 'user')
       res.redirect('/users/view')
     })
   })

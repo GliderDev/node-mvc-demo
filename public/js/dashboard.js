@@ -6,7 +6,6 @@ function cancelEdit () {
 }
 
 $(document).ready(function () {
-
   // Calling function to show/hide html content based on user role
   showRoleBasedData()
 
@@ -74,6 +73,13 @@ $(document).ready(function () {
 
   $('#category-list').on('change', function () {
     var value = this.value
+
+    if (value === '-1') {
+      $('#sub-category-list').prop('disabled', true)
+    } else {
+      $('#sub-category-list').prop('disabled', false)
+    }
+
     if (value === 'createNew') {
       $('#create-category').modal()
       $('#modalSave').click(function (event) {
@@ -103,6 +109,28 @@ $(document).ready(function () {
           })
         }
       })
+    }
+    var categoryId = $('#category-list').val()
+    $.ajax({
+      type: 'POST',
+      url: '/categories/sub_category',
+      data: {categoryId: categoryId},
+      cache: false,
+      success: function (successData) {
+        console.log(successData.data)
+        $('#sub-category-list').html(successData.data.html)
+      },
+      error: function (error) {
+        console.log('error')
+      }
+    })
+  })
+
+  $('#sub-category-list').on('change', function (event){
+    event.preventDefault()
+    var value = this.value
+    if(value === 'createNewSub') {
+
     }
   })
 })

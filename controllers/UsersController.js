@@ -6,7 +6,8 @@
  */
 
 var path = require('path')
-var auth = require('../models/Auth')
+var authHelper = require('../lib/authHelper')
+
 
 
 // Creating User model object
@@ -14,23 +15,45 @@ var userModel = require('.././models/Users')
 
 module.exports.controller = function (app) {
     // Users Add Page
-  app.get('/users/add', auth.ensureLogin, userModel.add)
+  app.get(
+    '/users/add',
+    authHelper.ensureAuth,
+    userModel.add
+  )
 
     // Users Add Functionality
-  app.post('/users/add', auth.ensureLogin, userModel.save)
+  app.post(
+    '/users/add',
+    authHelper.ensureAuth,
+    userModel.save
+  )
 
     // Users View Page
-  app.get('/users/view', auth.ensureLogin, userModel.list)
+  app.get(
+    '/users/view',
+    authHelper.ensureAuth,
+    userModel.list
+  )
 
     // Users Delete Functionality
-  app.get('/users/delete/:user_id',
-        auth.ensureLogin, userModel.delete
-    )
+  app.get(
+    '/users/delete/:user_id',
+    authHelper.ensureAuth,
+    userModel.delete
+  )
 
-    // Users Edit Page
-  app.get('/users/edit/:user_id', auth.ensureLogin, userModel.edit)
+  // Users Edit Page
+  app.get(
+    '/users/edit/:user_id',
+    authHelper.ensureAuth,
+    userModel.edit
+  )
 
-    // Users Edit Functionality
-  app.post('/users/edit/:user_id', auth.ensureLogin, userModel.save_edit)
+  // Users Edit Functionality
+  app.post(
+    '/users/edit/:user_id',
+    authHelper.ensureAuth,
+    userModel.save_edit
+  )
 }
 // End of User Controller

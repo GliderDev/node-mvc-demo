@@ -38,37 +38,6 @@ module.exports.setRole = function (acl) {
 }
 
 /**
- * checkAccess function
- *
- * To check if the user have access to given route with
- * given permission.
- *
- * @param  object   acl        ACL middleware object
- * @param  integer  userId     Id of the user
- * @param  string   resources  Route to check the access
- * @param  string   permission Type of permission to check
- * @return function cb         Callback function
- */
-module.exports.checkAccess = function (acl, userId, resources = '/', permission, cb) {
-  // Add / if not given
-  if (resources !== '/' && resources[0] !== '/') {
-    resources = '/' + resources
-  }
-
-  acl.isAllowed(userId, resources, permission, function (err, res) {
-    if (err) {
-      return (err, null)
-    }
-
-    if (res) {
-      return cb(null, true)
-    } else {
-      return cb(null, false)
-    }
-  })
-}
-
-/**
  * assignRole function
  *
  * To assign a user to a role

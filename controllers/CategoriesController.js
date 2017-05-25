@@ -5,7 +5,7 @@
  */
 
 var path = require('path')
-var auth = require('../models/Auth')
+var authHelper = require('../lib/authHelper')
 
 // Creating categories model object
 var categoriesModel = require('.././models/Categories')
@@ -13,26 +13,64 @@ var categoriesModel = require('.././models/Categories')
 module.exports.controller = function (app) {
   // Categories Add Page
 
-  app.get('/categories/add', auth.ensureLogin, categoriesModel.add)
+  app.get(
+    '/categories/add',
+    authHelper.ensureAuth,
+    categoriesModel.add
+  )
 
   // Categories Add Functionality
-  app.post('/categories/add', auth.ensureLogin, categoriesModel.save)
+  app.post(
+    '/categories/add',
+    authHelper.ensureAuth,
+    categoriesModel.save
+  )
 
   // Categories View Page
-  app.get('/categories/view', auth.ensureLogin, categoriesModel.list)
+  app.get(
+    '/categories/view',
+    authHelper.ensureAuth,
+    categoriesModel.list
+  )
 
   // Categories Edit Page
-  app.get('/categories/edit/:domain_id', auth.ensureLogin, categoriesModel.edit)
+  app.get(
+    '/categories/edit/:domain_id',
+    authHelper.ensureAuth,
+    categoriesModel.edit
+  )
 
   // Categories Edit Page
-  app.post('/categories/edit/:domain_id', auth.ensureLogin, categoriesModel.save_edit)
+  //app.post(
+  //   '/categories/edit/:domain_id',
+  //   authHelper.ensureAuth,
+  //   categoriesModel.saveEdit
+  // )
 
   // Categories Delete functionality
-  app.get('/categories/delete/:domain_id', auth.ensureLogin, categoriesModel.delete_category)
+  app.get(
+    '/categories/delete/:domain_id',
+    authHelper.ensureAuth,
+    categoriesModel.deleteCategory
+  )
 
-  app.get('/categories/create', auth.ensureLogin, categoriesModel.create_category)
+  app.get(
+    '/categories/create',
+    authHelper.ensureAuth,
+    categoriesModel.createCategory
+  )
 
-  app.post('/categories/create', auth.ensureLogin, categoriesModel.save_category)
+  app.post(
+    '/categories/create',
+    authHelper.ensureAuth, 
+    categoriesModel.saveCategory
+  )
+
+  app.post(
+    '/categories/sub_category',
+    authHelper.ensureAuth,
+    categoriesModel.getSubCategory
+  )
 }
 
  // End of Categories Controller

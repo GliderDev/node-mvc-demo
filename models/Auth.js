@@ -17,30 +17,6 @@ var rememberMe = function (req, res, next) {
 }
 
 /**
- * Middleware to check authentication
- *
- * @param {object} req  Request object
- * @param {object} res  Response object
- * @param {object} next Callback function
- */
-var ensureLogin = function (req, res, next) {
-  if (req.isAuthenticated()) {
-    // Sets uses image to global variable
-    if (req.user.profile_pic !== null) {
-      req.app.locals.profileImage = req.user.profile_pic
-    } else {
-      req.app.locals.profileImage = 'user_avatar.png'
-    }
-
-    // Sets uses user first name to global variable
-    req.app.locals.userFirstName = req.user.first_name
-    next()
-  } else {
-    res.redirect('/auth/login')
-  }
-}
-
-/**
  * To generate reset password token and to send
  * password reset acknowledgment email
  * @param {object} req  Request object
@@ -273,7 +249,7 @@ var resetPassword = function (req, res) {
  * @param {object} req  Request object
  * @param {object} res  Response object
  */
-var registerUser = function (req, res) {
+var registerUser = function (req, res, next) {
   let firstName = req.body.f_name
   let lastName = req.body.l_name
   let email = req.body.email
@@ -289,13 +265,20 @@ var registerUser = function (req, res) {
   if (imgObj) {
     profilePic = imgObj.name
     // Uploading image to /public/uploads directory
-    imgObj.mv(path.join(__dirname, '/../public/uploads/', profilePic), function (err) {
-      if (err) { new Error('error while uploading file ' + err) }
-    })
+    imgObj.mv(
+      path.join(__dirname, '/../public/uploads/', profilePic),
+      function (err) {
+        if (err) {
+          next(new Error('error while uploading file ' + err))
+        }
+      }
+    )
   }
 
   bcrypt.hash(password, config.passwordSaltRounds, function (err, hash) {
-    if (err) new Error('error while encrypting password ' + err)
+    if (err) {
+      next(new Error('error while encrypting password ' + err))
+    }
     // Inserting User data
     User.create({
       first_name: firstName,
@@ -321,7 +304,6 @@ var registerUser = function (req, res) {
 }
 
 module.exports.rememberMe = rememberMe
-module.exports.ensureLogin = ensureLogin
 module.exports.forgotPassword = forgotPassword
 module.exports.validatePasswordResetToken = validatePasswordResetToken
 module.exports.resetPassword = resetPassword

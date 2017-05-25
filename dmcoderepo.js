@@ -87,6 +87,9 @@ app.use(function (req, res, next) {
 
 // ======================== Authorization Configuration ======================
 
+var Codebase = require('./models/orm/Codebase')
+app.locals.Codebase = Codebase
+
 var Domain = require('./models/orm/Domain')
 app.locals.Domain = Domain
 
@@ -212,8 +215,8 @@ app.use(function (req, res, next) {
 // 500 error handler (middleware)
 app.use(function (err, req, res, next) {
   logger.error(err.stack)
-  res.status(500)
-  res.render('500')
+  res.status(500).send('Error Occurred')
+  // res.render('500')
 })
 
 module.exports = app

@@ -70,7 +70,7 @@ exports.edit = function (req, res) {
 
 // Categories save and edit functionality
 
-exports.save_edit = function (req, res) {
+exports.saveEdit = function (req, res) {
   console.log('Save Edit Categories to DB...')
 
   var input = JSON.parse(JSON.stringify(req.body))
@@ -93,7 +93,7 @@ exports.save_edit = function (req, res) {
 
 // Categories delete functionality
 
-exports.delete_category = function (req, res) {
+exports.deleteCategory = function (req, res) {
   var id = req.params.domain_id
 
   console.log('Delete id = ' + id)
@@ -107,7 +107,7 @@ exports.delete_category = function (req, res) {
   })
 }
 
-exports.create_category = function (req, res, next) {
+exports.createCategory = function (req, res, next) {
   let domain = req.app.locals.Domain
   domain.findAll({
     attribute: 'domain'
@@ -126,7 +126,7 @@ exports.create_category = function (req, res, next) {
   })
 }
 
-exports.save_category = function (req, res) {
+exports.saveCategory = function (req, res) {
   console.log(req.body)
 
   req.getConnection(function (err, connection) {
@@ -136,15 +136,16 @@ exports.save_category = function (req, res) {
     }
 
     req.app.locals.Domain.create(data).then(function (domainData) {
-      console.log(domainData)
+      // console.log(domainData)
 
       let domain = req.app.locals.Domain
+      console.log(domain)
       domain.findAll({
         attribute: 'domain'
       }).then(function (allDomain) {
         let allDomainHtml = '<option class="cat_default" value="">' +
           '--Select category--</option>' +
-          generateOptions(allDomain) + 
+          generateOptions(allDomain) +
           '<option class="cat_new" value="createNew">' +
           '--Create new--</option>'
 
@@ -154,6 +155,39 @@ exports.save_category = function (req, res) {
             html: allDomainHtml
           }})
       })
+    })
+  })
+}
+
+exports.getSubCategory = function (req, res) {
+  let Codebase = req.app.locals.Codebase
+
+  req.getConnection(function (err, connection) {
+    let html = ''
+    Codebase.findAll({
+      attribute: [ 'codebase_id', 'name', 'domain_id', 'author_id' ],
+      where: {
+        domain_id: req.body.categoryId
+      }
+    }).then(function (subDomains) {
+      subDomains.forEach(function (element) {
+        var resultElement = JSON.stringify(element)
+        console.log('result' + resultElement)
+
+        html += '<option ' +
+        'class="sub_cat_' + element.codebase_id + '"' +
+        ' value=' + element.codebase_id + '>' +
+        element.name + '</option>'
+      })
+      if (req.body.categoryId !== '-1') {
+        html += '<option class="sub_cat_new" value="createNewSub">' +
+          '--Create new--</option>'
+      }
+
+      res.json({error: false,
+        data: {
+          html: html
+        }})
     })
   })
 }
