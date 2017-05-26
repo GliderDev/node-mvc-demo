@@ -5,6 +5,7 @@
  */
 
 var auth = require('../models/Auth')
+var authHelper = require('../lib/authHelper')
 var flashHelper = require('../lib/flashHelper')
 
 // Module definition
@@ -119,5 +120,47 @@ module.exports.controller = function (app) {
   app.post('/auth/reset',
     parseForm, csrfMiddleware,
     auth.resetPassword
+  )
+
+  /**
+   * HTTP GET - To show user role
+   */
+  app.get(
+    '/auth/user-role',
+    authHelper.ensureAuth,
+    function (req, res) {
+      app.locals.acl.userRoles(req.user.user_id, function (err, roles) {
+        if (err) {
+          let errData = {
+            error: true,
+            message: 'Sorry an error occurred while determining user role'
+          }
+          app.locals.logger.error(
+            req.url + ': Error response: ' +
+            JSON.stringify(errData) +
+            'error:' + JSON.stringify(err)
+          )
+          res.json(errData)
+        }
+        // Returns user role
+        if (roles.length) {
+          res.json({
+            error: false,
+            data: {role: roles[0]}
+          })
+        } else {
+          let roleErrData = {
+            error: true,
+            message: 'user has not assigned any roles,' +
+              ' Please contact you Administrator'
+          }
+          app.locals.logger.error(
+            req.url + ': Empty user role response: ' +
+            JSON.stringify(roleErrData)
+          )
+          res.json(roleErrData)
+        }
+      })
+    }
   )
 } // End of Authorization Controller

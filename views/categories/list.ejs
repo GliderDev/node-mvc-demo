@@ -1,7 +1,7 @@
-
 <%- include('./../layouts/dashboard/header', {title, href}) %>
 
 <%- include('./../layouts/dashboard/sidebar', {title}) %>
+
 
 <aside class="right-side">
 
@@ -20,6 +20,9 @@
 
         <div class="row">
           <!-- left column -->
+					
+					<div class="col-md-12">
+
           <div class="col-md-6">
             <!-- general form elements -->
             <div class="box box-primary">
@@ -27,56 +30,162 @@
                 <form id="categoryForm" role="form" method="post" action="/categories/add" 
 											enctype="multipart/form-data">
 											
-                     <div class="box-body">
+                    <div class="box-body">
                         
-                           <div class="form-group">
+                          <div class="form-group">
                                 <label>Main category</label>
                         
                                 <select class="form-control" name="category-list" id="category-list">
 									
                                     <option class="cat_default" value="-1">--Select category--</option>
-                                    <%- html %>		
-									<option class="cat_new" value="createNew">--Create new--</option>
+                                    
+																		<option class="cat_new" value="createNew">--Create new--</option>
                                
                                 </select>
-                            </div>
+                          </div>
 
-                            <div class="form-group">
+                          <div class="form-group">
                                 <label>Sub category</label>
                                 <select class="form-control" name="sub-category-list" id="sub-category-list" disabled>
                                
                                 </select>                            
-						    </div>
-
-							<div class="form-group">
-                                <label>Title</label>
-                                <input type="text" class="form-control" id="title" name="title" 
-                                       placeholder="Enter Title">     
-                            </div>
-
-														<div class="form-group">
-                                <label>Description</label>
-                                <textarea class="form-control" rows="3" placeholder="Enter ..."></textarea>
-                            </div>
-
-														<div class="form-group">
-                                <label for="uploads">File uploads</label>
-                                <input type="file" id="uploads" name="uploads">
-                            </div>
+						    					</div>
 
                     </div> <!-- /.box-body -->
 
-                    <div class="box-footer">
-                            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
-                            <input type="button" class="btn btn-warning" value="Cancel" onclick="createDomain()"></input>
-                    </div>
                 </form>  
-								
             </div>
+
           </div> 
-        </div>
+					</div>
+
+					<!-- new class-->
+					<div class="col-md-6">
+
+							<div class="box">
+
+                  <div class="box-header">
+                      <h3 class="box-title">Category List</h3>
+                  </div><!-- /.box-header -->
+
+                  <div class="box-body">
+                    <table class="table table-bordered">
+                      
+											<tr>
+                        <th style="width: 10px">#</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th style="width: 40px">Action</th>
+                      </tr>
+                      
+											<tr>
+                        <td>1.</td>
+                        <td>PHP</td>
+                        <td>Active</td>
+                        <td><button class="btn btn-danger">Reject</td>
+                      </tr>
+
+                      <tr>
+                        <td>2.</td>
+                        <td>Python</td>
+                        <td>Pending</td>
+                        <td><button class="btn btn-success">Approve</td>
+                      </tr>
+
+                      <tr>
+                        <td>3.</td>
+                        <td>Java</td>
+                        <td>Pending</td>
+                        <td><button class="btn btn-success">Approve</td>
+                      </tr>
+                      
+											<tr>
+                        <td>4.</td>
+                        <td>Dot Net</td>
+                        <td>Active</td>
+                        <td><button class="btn btn-danger">Reject</td>
+                      </tr>
+
+                    </table>
+                  </div><!-- /.box-body -->
+                  
+									<div class="box-footer clearfix">
+                  	<ul class="pagination pagination-sm no-margin pull-right">
+                    	<li><a href="#">&laquo;</a></li>
+                      <li><a href="#">1</a></li>
+                      <li><a href="#">2</a></li>
+                      <li><a href="#">3</a></li>
+                      <li><a href="#">&raquo;</a></li>
+                    </ul>
+                  </div>
+              </div><!-- /.box -->
+
+          </div> <!-- end of new class -->
+					
+						<!-- new class-->
+					<div class="col-md-6">
+
+							<div class="box">
+
+                  <div class="box-header">
+                      <h3 class="box-title">Sub Category List</h3>
+                  </div><!-- /.box-header -->
+
+                  <div class="box-body">
+                    <table class="table table-bordered">
+                      
+											<tr>
+                        <th style="width: 10px">#</th>
+                        <th>Category</th>
+											  <th>Sub Category</th>
+												<th>Status</th>
+                        <th style="width: 40px">Action</th>
+                      </tr>
+                      
+											<tr>
+                        <td>1.</td>
+                        <td>PHP</td>
+                        <td>Yii</td>
+												<td>Active</td>
+                        <td><button class="btn btn-danger">Reject</td>
+                      </tr>
+
+                      <tr>
+                        <td>2.</td>
+                        <td>PHP</td>
+                        <td>Yii2</td>
+												<td>Active</td>
+                        <td><button class="btn btn-danger">Reject</td>
+                      </tr>
+
+											<tr>
+                        <td>3.</td>
+                        <td>Python</td>
+                        <td>Django</td>
+												<td>Pending</td>
+                        <td><button class="btn btn-success">Approve</td>
+                      </tr>
+
+                    </table>
+                  </div><!-- /.box-body -->
+                  
+									<div class="box-footer clearfix">
+                  	<ul class="pagination pagination-sm no-margin pull-right">
+                    	<li><a href="#">&laquo;</a></li>
+                      <li><a href="#">1</a></li>
+                      <li><a href="#">2</a></li>
+                      <li><a href="#">3</a></li>
+                      <li><a href="#">&raquo;</a></li>
+                    </ul>
+                  </div>
+              </div><!-- /.box -->
+
+          </div> <!-- end of new class -->
+					
+
+    	</div>
      
-     </section>     
+    </section>     
 
 </aside>   
 
@@ -152,6 +261,7 @@
       
     </div>
 </div>
+
 
 
 

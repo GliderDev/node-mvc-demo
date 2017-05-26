@@ -126,11 +126,40 @@ $(document).ready(function () {
     })
   })
 
-  $('#sub-category-list').on('change', function (event){
+  $('#sub-category-list').on('change', function (event) {
     event.preventDefault()
     var value = this.value
-    if(value === 'createNewSub') {
+    if (value === 'createNewSub') {
+      $('#create-sub-category').modal()
+      $('#modalSubCatSave').click(function (event) {
+        var domainId = $('#category-list').val()
+        var subCat = $('#sub_category_name').val()
+        var subCatDesc = $('#sub_category_desc').val()
 
+        $.ajax({
+          type: 'POST',
+          url: '/categories/sub_cat_create',
+          data: {subCategory: subCat, description: subCatDesc, domain_id: domainId},
+          cache: false,
+          success: function (successData) {
+            alert('successsss')
+            console.log('sadasd')
+            console.log('success data ' + successData)
+            if (!successData.error && successData.data.html.length) {
+              var id = successData.data.id
+              console.log('testing '+ successData.data.html)
+              $('#sub-category-list').html(successData.data.html)
+              $('.sub_cat_' + id).attr('selected', true)
+            } else {
+              console.log('else case')
+              $('.sub_cat_default').attr('selected', true)
+            }
+          },
+          error: function (error) {
+            console.log('error')
+          }
+        })
+      })
     }
   })
 })
@@ -139,7 +168,7 @@ $(document).ready(function () {
  * To show/hide html content based on user role
  */
 function showRoleBasedData () {
-  httpGet('/rbac/user-role', '', function (responseData) {
+  httpGet('/auth/user-role', '', function (responseData) {
     if (responseData.error) {
       window.alert(responseData.message)
     } else {
@@ -150,6 +179,7 @@ function showRoleBasedData () {
         $('.user-role').show()
       } else if (role === 'admin') {
         $('.admin-role').show()
+        $('.user-role').show()
       } else {
         window.alert(
           'user role has not assigned, please contact you Administrator'

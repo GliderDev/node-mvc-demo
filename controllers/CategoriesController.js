@@ -14,47 +14,6 @@ module.exports.controller = function (app) {
   // Categories Add Page
 
   app.get(
-    '/categories/add',
-    authHelper.ensureAuth,
-    categoriesModel.add
-  )
-
-  // Categories Add Functionality
-  app.post(
-    '/categories/add',
-    authHelper.ensureAuth,
-    categoriesModel.save
-  )
-
-  // Categories View Page
-  app.get(
-    '/categories/view',
-    authHelper.ensureAuth,
-    categoriesModel.list
-  )
-
-  // Categories Edit Page
-  app.get(
-    '/categories/edit/:domain_id',
-    authHelper.ensureAuth,
-    categoriesModel.edit
-  )
-
-  // Categories Edit Page
-  //app.post(
-  //   '/categories/edit/:domain_id',
-  //   authHelper.ensureAuth,
-  //   categoriesModel.saveEdit
-  // )
-
-  // Categories Delete functionality
-  app.get(
-    '/categories/delete/:domain_id',
-    authHelper.ensureAuth,
-    categoriesModel.deleteCategory
-  )
-
-  app.get(
     '/categories/create',
     authHelper.ensureAuth,
     categoriesModel.createCategory
@@ -62,7 +21,7 @@ module.exports.controller = function (app) {
 
   app.post(
     '/categories/create',
-    authHelper.ensureAuth, 
+    authHelper.ensureAuth,
     categoriesModel.saveCategory
   )
 
@@ -70,6 +29,18 @@ module.exports.controller = function (app) {
     '/categories/sub_category',
     authHelper.ensureAuth,
     categoriesModel.getSubCategory
+  )
+
+  app.post(
+    '/categories/sub_cat_create',
+    authHelper.ensureAuth,
+    categoriesModel.saveSubCategory
+  )
+
+  app.get(
+    '/categories/list',
+    authHelper.ensureAuth,
+    categoriesModel.listCategory
   )
 }
 

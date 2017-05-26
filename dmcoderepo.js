@@ -87,6 +87,9 @@ app.use(function (req, res, next) {
 
 // ======================== Authorization Configuration ======================
 
+var Subdomain = require('./models/orm/Subdomain')
+app.locals.Subdomain = Subdomain
+
 var Codebase = require('./models/orm/Codebase')
 app.locals.Codebase = Codebase
 
@@ -194,9 +197,6 @@ var ormConnection = new Sequelize(
 )
 var acl = new Acl(new AclSeq(ormConnection, { prefix: 'acl_' }))
 app.locals.acl = acl
-// var rbac = require('./models/Rbac')
-// need to run only once to create permissions
-// rbac.setRole(acl)
 
 // dynamically include routes (Controller)
 fs.readdirSync('./controllers').forEach(function (file) {

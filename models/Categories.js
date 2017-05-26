@@ -1,112 +1,6 @@
 
 // Categories list functionality
 
-exports.list = function (req, res) {
-  console.log('Categories List....')
-
-  req.getConnection(function (err, connection) {
-    connection.query('SELECT * FROM domain', function (err, rows) {
-      if (err) {
-        console.log('Error Selecting : %s ', err)
-      }
-      res.render('categories/view', { page_title: 'Categories - Node.js', data: rows })
-    })
-  })
-}
-
-// Categories Add functionality
-
-exports.add = function (req, res) {
-  console.log('Add Categories  Page...')
-  var title = req.user.first_name
-  var profilePic = req.user.profile_pic
-
-  res.render('categories/add', {
-    title: title,
-    userPic: profilePic,
-    href: 'logout'
-
-  })
-}
-
-// Categories save functionality
-
-exports.save = function (req, res) {
-  console.log(req.body)
-  console.log('Save Categories to DB...')
-
-  var input = JSON.parse(JSON.stringify(req.body))
-
-  req.getConnection(function (err, connection) {
-    var data = {
-      domain: input.category_name,
-      description: input.description
-    }
-
-    var query = connection.query('INSERT INTO domain set ? ', data, function (err, rows) {
-      if (err) { console.log('Error inserting : %s ', err) }
-
-      console.log('success')
-      res.redirect('/')
-    })
-  })
-}
-
-// Categories save functionality
-
-exports.edit = function (req, res) {
-  console.log('Edit Category  Page...')
-
-  var id = req.params.domain_id
-
-  req.getConnection(function (err, connection) {
-    var query = connection.query('SELECT * FROM domain WHERE domain_id = ?', [id], function (err, rows) {
-      if (err) { console.log('Error Selecting : %s ', err) }
-
-      res.render('categories/edit', { page_title: 'Edit categories - Node.js', data: rows })
-    })
-  })
-}
-
-// Categories save and edit functionality
-
-exports.saveEdit = function (req, res) {
-  console.log('Save Edit Categories to DB...')
-
-  var input = JSON.parse(JSON.stringify(req.body))
-  var id = req.params.domain_id
-
-  req.getConnection(function (err, connection) {
-    var data = {
-      domain: input.category_name,
-      description: input.description
-    }
-
-    var query = connection.query('UPDATE domain set ? WHERE domain_id = ? ', [data, id], function (err, rows) {
-      if (err) { console.log('Error inserting : %s ', err) }
-
-      console.log('success')
-      res.redirect('/categories/view')
-    })
-  })
-}
-
-// Categories delete functionality
-
-exports.deleteCategory = function (req, res) {
-  var id = req.params.domain_id
-
-  console.log('Delete id = ' + id)
-
-  req.getConnection(function (err, connection) {
-    connection.query('DELETE FROM domain  WHERE domain_id = ? ', [id], function (err, rows) {
-      if (err) { console.log('Error deleting : %s ', err) }
-
-      res.redirect('/categories/view')
-    })
-  })
-}
-
 exports.createCategory = function (req, res, next) {
   let domain = req.app.locals.Domain
   domain.findAll({
@@ -139,7 +33,6 @@ exports.saveCategory = function (req, res) {
       // console.log(domainData)
 
       let domain = req.app.locals.Domain
-      console.log(domain)
       domain.findAll({
         attribute: 'domain'
       }).then(function (allDomain) {
@@ -160,24 +53,21 @@ exports.saveCategory = function (req, res) {
 }
 
 exports.getSubCategory = function (req, res) {
-  let Codebase = req.app.locals.Codebase
+  let Subdomain = req.app.locals.Subdomain
 
   req.getConnection(function (err, connection) {
     let html = ''
-    Codebase.findAll({
-      attribute: [ 'codebase_id', 'name', 'domain_id', 'author_id' ],
+    Subdomain.findAll({
+      attribute: [ 'sub_domain_id', 'subdomain', 'description', 'domain_id' ],
       where: {
         domain_id: req.body.categoryId
       }
     }).then(function (subDomains) {
       subDomains.forEach(function (element) {
-        var resultElement = JSON.stringify(element)
-        console.log('result' + resultElement)
-
         html += '<option ' +
-        'class="sub_cat_' + element.codebase_id + '"' +
-        ' value=' + element.codebase_id + '>' +
-        element.name + '</option>'
+        'class="sub_cat_' + element.sub_domain_id + '"' +
+        ' value=' + element.sub_domain_id + '>' +
+        element.sub_domain + '</option>'
       })
       if (req.body.categoryId !== '-1') {
         html += '<option class="sub_cat_new" value="createNewSub">' +
@@ -192,15 +82,56 @@ exports.getSubCategory = function (req, res) {
   })
 }
 
+exports.saveSubCategory = function (req, res) {
+  req.getConnection(function (err, connection) {
+    var data = {
+      sub_domain: req.body.subCategory,
+      description: req.body.description,
+      domain_id: req.body.domain_id
+    }
+
+    req.app.locals.Subdomain.create(data).then(function (subDomainData) {
+      let subdomain = req.app.locals.Subdomain
+      subdomain.findAll({
+        attribute: 'sub_domain',
+        where: {
+          domain_id: req.body.domain_id
+        }
+      }).then(function (allSubDomain) {
+        let allSubDomainHtml = '<option class="sub_cat_default" value="-1">' +
+          '--Select category--</option>'
+
+        allSubDomain.forEach(function (element) {
+          allSubDomainHtml += '<option ' +
+            'class="sub_cat_' + element.sub_domain_id + '"' +
+            ' value=' + element.sub_domain_id + '>' +
+            element.sub_domain + '</option>'
+        })
+        allSubDomainHtml += '<option class="sub_cat_new" value="createNew">' +
+          '--Create new--</option>'
+
+        res.json({error: false,
+          data: {
+            id: subDomainData.sub_domain_id,
+            html: allSubDomainHtml
+          }})
+      })
+    })
+  })
+}
+
+exports.listCategory = function (req, res) {
+  res.render('categories/list', {title: 'test', href: 'logout'})
+}
+
 function generateOptions (optionData) {
   let html = ''
-
   if (optionData.length) {
     optionData.forEach(function (element) {
       html += '<option ' +
-      'class="cat_' + element.domain_id + '"' +
-      ' value=' + element.domain_id + '>' +
-      element.domain + '</option>'
+        'class="cat_' + element.domain_id + '"' +
+        ' value=' + element.domain_id + '>' +
+        element.domain + '</option>'
     })
   } else if (typeof (optionData) === 'object') {
     html += '<option ' +

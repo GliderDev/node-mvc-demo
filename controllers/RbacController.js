@@ -103,48 +103,6 @@ module.exports.controller = function (app) {
   )
 
   /**
-   * HTTP GET - To show user role
-   */
-  app.get(
-    '/rbac/user-role',
-    authHelper.ensureAuth,
-    function (req, res) {
-      app.locals.acl.userRoles(req.user.user_id, function (err, roles) {
-        if (err) {
-          let errData = {
-            error: true,
-            message: 'Sorry an error occurred while determining user role'
-          }
-          app.locals.logger.error(
-            req.url + ': Error response: ' +
-            JSON.stringify(errData) +
-            'error:' + JSON.stringify(err)
-          )
-          res.json(errData)
-        }
-        // Returns user role
-        if (roles.length) {
-          res.json({
-            error: false,
-            data: {role: roles[0]}
-          })
-        } else {
-          let roleErrData = {
-            error: true,
-            message: 'user has not assigned any roles,' +
-              ' Please contact you Administrator'
-          }
-          app.locals.logger.error(
-            req.url + ': Empty user role response: ' +
-            JSON.stringify(roleErrData)
-          )
-          res.json(roleErrData)
-        }
-      })
-    }
-  )
-
-  /**
    * HTTP GET- To show allowed permission of the user
    */
   app.get('/rbac/show-permission', function (req, res) {
@@ -161,30 +119,48 @@ module.exports.controller = function (app) {
   /**
    * HTTP GET - To check if user has access in given resource and permission
    */
-  app.get('/rbac/allowed/:resource/:permission', function (req, res, next) {
-    req.app.locals.acl.isAllowed(
-      req.user.user_id,
-      req.params.resource,
-      req.params.permission,
-      function (err, isAllowed) {
-        if (err) {
-          req.app.locals.logger.error(JSON.stringify(err))
-          next(new Error(err))
+  app.get(
+    '/rbac/allowed/:resource/:permission',
+    authHelper.ensureAuth,
+    function (req, res, next) {
+      req.app.locals.acl.isAllowed(
+        req.user.user_id,
+        req.params.resource,
+        req.params.permission,
+        function (err, isAllowed) {
+          if (err) {
+            req.app.locals.logger.error(JSON.stringify(err))
+            next(new Error(err))
+          }
+          res.json(isAllowed)
+          // Proceed to next middleware if allowed
+          // else redirect to dashboard
+          // if (isAllowed) {
+          //   next()
+          // } else {
+          //   req.flash(
+          //     'authError',
+          //     "You're not authorized to do this action"
+          //   )
+          //   console.log('here')
+          //   res.redirect('/')
+          // }
         }
-        res.json(isAllowed)
-        // Proceed to next middleware if allowed
-        // else redirect to dashboard
-        // if (isAllowed) {
-        //   next()
-        // } else {
-        //   req.flash(
-        //     'authError',
-        //     "You're not authorized to do this action"
-        //   )
-        //   console.log('here')
-        //   res.redirect('/')
-        // }
-      }
-    )
-  })
+      )
+    }
+  )
+
+  /**
+   * HTTP GET - To create roles and permissions
+   */
+  app.get(
+    '/rbac/set-role',
+    // authHelper.ensureAuth,
+    function (req, res, next) {
+      let message = 'Roles and permissions created'
+      rbac.setRole(req.app.locals.acl)
+      req.app.locals.logger.info(message)
+      res.send(message)
+    }
+  )
 }
