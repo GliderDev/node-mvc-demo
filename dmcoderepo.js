@@ -5,23 +5,42 @@
  */
 
 // Including extra Packages
-var express = require('express') // Express Framework
-var mysql = require('mysql') // Mysql Driver
-var connection = require('express-myconnection') // Mysql Driver Helper
-var path = require('path') // Path creation helper
-var fs = require('fs') // File read and write helper
-var cookieParser = require('cookie-parser') // Cookie data parser
-var session = require('express-session') // Session Helper
-var bodyParser = require('body-parser') // HTTP POST data parser
-var csrf = require('csurf') // CSRF helper
-var passport = require('passport') // Authenication helper
-var LocalStrategy = require('passport-local') // Local Authenication helper
-var expressFileUpload = require('express-fileupload') // File upload helper
-var bcrypt = require('bcrypt') // Password encryption helper
-var Sequelize = require('sequelize') // ORM
-var Acl = require('acl') // RBAC Helper
-var AclSeq = require('acl-sequelize') // RBAC database helper
-var helmet = require('helmet') // HTTP header protection
+// Express Framework
+var express = require('express')
+// Mysql Driver
+var mysql = require('mysql')
+// Mysql Driver Helper
+var connection = require('express-myconnection')
+// Path creation helper
+var path = require('path')
+// File read and write helper
+var fs = require('fs')
+// Cookie data parser
+var cookieParser = require('cookie-parser')
+// Session Helper
+var session = require('express-session')
+// HTTP POST data parser
+var bodyParser = require('body-parser')
+// CSRF helper
+var csrf = require('csurf')
+// Authenication helper
+var passport = require('passport')
+// Local Authenication helper
+var LocalStrategy = require('passport-local')
+// File upload helper
+var expressFileUpload = require('express-fileupload')
+// Password encryption helper
+var bcrypt = require('bcrypt')
+// ORM
+var Sequelize = require('sequelize')
+// RBAC Helper
+var Acl = require('acl')
+// RBAC database helper
+var AclSeq = require('acl-sequelize')
+// HTTP header protection
+var helmet = require('helmet')
+// To show flash messages
+var flash = require('connect-flash')
 
 // Configuring  csrf and bodyParser middlewares
 var csrfProtection = csrf({ cookie: true })
@@ -50,40 +69,33 @@ app.use(express.static(path.join(__dirname, 'public')))
 // Database connection string
 app.use(connection(mysql, config.db))
 
-// Adding CSRF middleware
-app.use(cookieParser())
-
 // Setting Session
 app.use(session(config.session))
+
+// Adding CSRF middleware
+app.use(cookieParser('pass'))
+
+// flash message middleware
+app.use(flash())
+app.use(function (req, res, next) {
+  // if there's a flash message, transfer
+  // it to the context, then clear it
+  res.locals.flash = req.session.flash
+
+  if (req.session.flash) {
+    delete req.session.flash
+  }
+  next()
+})
+
+var flashHelper = require('./lib/flashHelper')
+app.locals.flashHelper = flashHelper
 
 app.locals.csrfProtection = csrfProtection
 app.locals.parseForm = parseForm
 // app.locals.parseFileUploads = parseFileUploads;
 app.use(parseForm)
 app.use(expressFileUpload())
-
-// flash message middleware
-app.use(require('flash')())
-app.use(function (req, res, next) {
-  // Since passport flash is not working, we will
-  // pass data session and set from flash here
-  // then delete the data from session
-  if (req.session.authFlash) {
-    req.flash(
-      req.session.authFlash.type,
-      req.session.authFlash.message
-    )
-    delete req.session.authFlash
-  }
-
-  // if there's a flash message, transfer
-  // it to the context, then clear it
-  res.locals.flash = req.session.flash
-  if (req.session.flash) {
-    delete req.session.flash
-  }
-  next()
-})
 
 // ======================== Authorization Configuration ======================
 
@@ -105,18 +117,12 @@ passport.use('login', new LocalStrategy({
 function (req, email, password, cb) {
   // Validating before querying
   if (email === '') {
-    req.session.authFlash = {
-      type: 'loginStatus',
-      message: 'Email provided is empty'
-    }
+    req.flash('error', 'Email provided is empty')
     return cb(null, false)
   }
 
   if (password === '') {
-    req.session.authFlash = {
-      type: 'loginStatus',
-      message: 'Password provided is empty'
-    }
+    req.flash('error', 'Password provided is empty')
     return cb(null, false)
   }
 
@@ -131,28 +137,22 @@ function (req, email, password, cb) {
         bcrypt.compare(password, user.password, function (err, res) {
           if (err) {
             logger.error(err)
-            req.session.authFlash = {
-              type: 'loginStatus',
-              message: 'Sorry, Error occurred during password verification'
-            }
+            req.flash(
+              'error',
+              'Sorry, Error occurred during password verification'
+            )
             return cb(null, false)
           }
           if (res) {
             return cb(null, user)
           } else {
-            req.session.authFlash = {
-              type: 'loginStatus',
-              message: 'Incorrect password'
-            }
+            req.flash('error', 'Incorrect password')
             return cb(null, false)
           }
         })
       } else {
         // Setting login status since passport flash is not working
-        req.session.authFlash = {
-          type: 'loginStatus',
-          message: 'Incorrect username or password.'
-        }
+        req.flash('error', 'Incorrect username or password.')
         return cb(null, false)
       }
     })

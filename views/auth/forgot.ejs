@@ -4,11 +4,25 @@
 
     <form id="forgot-form" action="/auth/forgot" method="post">
         <div class="body bg-gray">
-            <div class="form-group validate-group <% if (message === ''){ %>hide<% } %>">
-                <div class="alert alert-<% if(type === 'fail') {%>danger<% } else { %>success<% } %>">
-                    <div id="validate-message"><%= message %></div>
+            <%
+                var flashClass = ' hide'
+                var flashMessage = ''
+                var flashTypes = ['error', 'success', 'info', 'warning']
+                flashTypes.forEach(function (type) {
+                    if (typeof (flash) === 'object' && flash.hasOwnProperty(type)) {
+                        flashClass = type !== 'error' ? type : 'danger'
+                        flashMessage = flashHelper.getFlash(flash, type)
+                    }
+                })
+
+                if (flashMessage !== '') {
+            %>
+                <div class="form-group">
+                    <div class="alert alert-<%= flashClass %>">
+                        <%= flashMessage %>
+                    </div>
                 </div>
-            </div>
+            <% } %>
             <div class="form-group">
                 <input type="hidden" name="_csrf" value="<%= csrf %>"><br/>
                 <input type="text" id="email" name="email" class="form-control" placeholder="email"/>
