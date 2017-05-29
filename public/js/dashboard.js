@@ -9,6 +9,9 @@ $(document).ready(function () {
   // Calling function to show/hide html content based on user role
   showRoleBasedData()
 
+  // Calling function to show dashboard counts
+  getDashboardCounts()
+
   $('#submitBtn').click(function (event) {
     event.preventDefault()
 
@@ -187,6 +190,25 @@ function showRoleBasedData () {
       }
     }
   })
+}
+
+/**
+ * To show Dashboard downloads, catagories, subcategories and active user counts
+ */
+function getDashboardCounts () {
+  if (window.location.pathname === '/') {
+    httpGet('/dashboard/counts', '', function (responseData) {
+      if (responseData.error) {
+        window.alert(responseData.message)
+      } else {
+        let dashboard = responseData
+        $('#total-downloads').text(0)
+        $('#total-cat').text(dashboard.categories)
+        $('#total-sub-cat').text(dashboard.subCategories)
+        // $('#active-users').text(dashboard.users)
+      }
+    })
+  }
 }
 
 /**

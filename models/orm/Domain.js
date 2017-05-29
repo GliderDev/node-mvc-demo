@@ -24,6 +24,11 @@ var Domain = sequelize.define('domain', {
   description: {
     type: Sequelize.STRING,
     allowNull: true
+  },
+  status: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
   }
 
 }, {

@@ -28,6 +28,11 @@ var Subdomain = sequelize.define('sub_domain', {
   domain_id: {
     type: Sequelize.INTEGER,
     allowNull: false
+  },
+  status: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0
   }
 
 }, {

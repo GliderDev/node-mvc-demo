@@ -37,11 +37,17 @@ module.exports.controller = function (app) {
     categoriesModel.saveSubCategory
   )
 
-  app.get(
-    '/categories/list',
-    authHelper.ensureAuth,
-    categoriesModel.listCategory
-  )
+  // app.get(
+  //   '/categories/list',
+  //   authHelper.ensureAuth,
+  //   categoriesModel.listCategory
+  // )
+
+  // app.get(
+  //   '/categories/getList',
+  //   authHelper.ensureAuth,
+  //   categoriesModel.getCategoryList
+  // )
 }
 
  // End of Categories Controller

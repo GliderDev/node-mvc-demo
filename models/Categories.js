@@ -2,16 +2,18 @@
 // Categories list functionality
 
 exports.createCategory = function (req, res, next) {
+  console.log('create cat')
   let domain = req.app.locals.Domain
   domain.findAll({
-    attribute: 'domain'
+    attribute: ['domain', 'domain_id', 'description', 'status']
   }).then(function (result) {
     if (result) {
       let html = generateOptions(result)
       res.render('categories/create', {
         href: 'logout',
         title: 'ytets',
-        html: html
+        html: html,
+        allDomain: result
       })
     } else {
       req.app.locals.logger.error('Domain is empty')
@@ -120,9 +122,14 @@ exports.saveSubCategory = function (req, res) {
   })
 }
 
-exports.listCategory = function (req, res) {
-  res.render('categories/list', {title: 'test', href: 'logout'})
-}
+// exports.getCategoryList = function (req, res) {
+//   let domain = req.app.locals.Domain
+//   domain.findAll({
+//     attribute: ['domain_id', 'domain', 'status']
+//   }).then(function (allDomainData) {
+//     console.log('allDomin =' + allDomainData)
+//   })
+// }
 
 function generateOptions (optionData) {
   let html = ''
