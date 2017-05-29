@@ -219,4 +219,7 @@ app.use(function (err, req, res, next) {
   // res.render('500')
 })
 
-module.exports = app
+module.exports = function (io) {
+  app.locals.io = io
+  return app
+}

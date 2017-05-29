@@ -4,7 +4,6 @@
  * This controller is used group default route function
  */
 var authHelper = require('../lib/authHelper')
-var flashHelper = require('../lib/flashHelper')
 var async = require('async')
 
 module.exports.controller = function (app) {
@@ -19,6 +18,21 @@ module.exports.controller = function (app) {
     getCounts
   )
 
+  app.get('/dashboard/chat', function (req, res) {
+    let path = require('path')
+    let io = req.app.locals.io
+    io.on('connection', function (socket) {
+      console.log('a user connected')
+      socket.on('chat message', function (msg) {
+        console.log(msg)
+        io.emit('chat message', msg)
+      })
+      socket.on('disconnect', function () {
+        console.log('user disconnected')
+      })
+    })
+    res.sendFile(path.join(__dirname, '/../', '/index.html'))
+  })
 } // End of Default Controller
 
 var getCounts = function (req, res, next) {
