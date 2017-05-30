@@ -150,7 +150,7 @@ $(document).ready(function () {
             console.log('success data ' + successData)
             if (!successData.error && successData.data.html.length) {
               var id = successData.data.id
-              console.log('testing '+ successData.data.html)
+              console.log('testing ' + successData.data.html)
               $('#sub-category-list').html(successData.data.html)
               $('.sub_cat_' + id).attr('selected', true)
             } else {
@@ -197,18 +197,32 @@ function showRoleBasedData () {
  */
 function getDashboardCounts () {
   if (window.location.pathname === '/') {
-    httpGet('/dashboard/counts', '', function (responseData) {
-      if (responseData.error) {
-        window.alert(responseData.message)
+    let dashboardData = ''
+    let socket = io()
+    // Trigger event in back-end
+    socket.emit('init counts')
+
+    // Listen to event to get dashboard counts
+    socket.on('update-dashboard-counts', function (responseData) {
+      if (!responseData.error) {
+        // Changes Dashboard counts using jQuery
+        changeDashboardCounters(responseData.data)
       } else {
-        let dashboard = responseData
-        $('#total-downloads').text(0)
-        $('#total-cat').text(dashboard.categories)
-        $('#total-sub-cat').text(dashboard.subCategories)
-        // $('#active-users').text(dashboard.users)
+        console.log('Error in Socket Response' + JSON.stringify(responseData))
       }
     })
   }
+}
+
+/**
+ * To do DOM changes to show dashboard counts
+ * @param {object} dashboardData 
+ */
+function changeDashboardCounters (dashboardData) {
+  $('#total-downloads').text(dashboardData.downloads)
+  $('#total-cat').text(dashboardData.categories)
+  $('#total-sub-cat').text(dashboardData.subCategories)
+  $('#active-users').text(dashboardData.users)
 }
 
 /**

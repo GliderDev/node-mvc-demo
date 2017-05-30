@@ -1,8 +1,9 @@
 
 var dateTime = require('node-datetime')
+var dashboard = require('../models/Dashboard')
 
 // Users list functionality
-exports.list = function (req, res) {
+exports.list = function (req, res, next) {
   req.getConnection(function (err, connection) {
     if (err) req.app.locals.logger.error(err)
     connection.query('SELECT * FROM user', function (err, rows) {
@@ -17,14 +18,14 @@ exports.list = function (req, res) {
 }
 
 // Users add functionality
-exports.add = function (req, res) {
+exports.add = function (req, res, next) {
   res.render('users/add', {
     page_title: 'Add Users - Node.js'
   })
 }
 
 // Users list functionality
-exports.edit = function (req, res) {
+exports.edit = function (req, res, next) {
   let id = req.params.user_id
 
   req.getConnection(function (err, connection) {
@@ -42,7 +43,7 @@ exports.edit = function (req, res) {
 }
 
 // Users save functionality
-exports.save = function (req, res) {
+exports.save = function (req, res, next) {
   var input = JSON.parse(JSON.stringify(req.body))
   var img = req.files.uploads
 
@@ -99,8 +100,10 @@ exports.save = function (req, res) {
           , data
           , function (err, rows) {
             if (err) {
-              req.app.locals.logger.error(err)
+              next(new Error(err))
             } else {
+              // Trigger event in front end to update dashboard counts
+              dashboard.getCounts(req, res, next)
               res.redirect('/users/view')
             }
           }
@@ -109,7 +112,7 @@ exports.save = function (req, res) {
 }
 
 // Users edit and save functionality
-exports.save_edit = function (req, res) {
+exports.save_edit = function (req, res, next) {
   var input = JSON.parse(JSON.stringify(req.body))
   var id = req.params.user_id
 
@@ -170,7 +173,7 @@ exports.save_edit = function (req, res) {
 }
 
 // Users delete functionality
-exports.delete = function (req, res) {
+exports.delete = function (req, res, next) {
   var id = req.params.user_id
 
   req.getConnection(function (err, connection) {
@@ -178,8 +181,12 @@ exports.delete = function (req, res) {
     connection.query('DELETE FROM user  WHERE user_id = ? ', [id], function (err, rows) {
       if (err) { req.app.locals.logger.error('Error deleting : %s ', err) }
 
+      // Trigger event in front end to update dashboard counts
+      dashboard.getCounts(req, res, next)
+
       // Removes User's role for RBAC tables
-      req.app.locals.acl.addUserRoles(id, 'user')
+      req.app.locals.acl.removeUserRoles(id, 'user')
+
       res.redirect('/users/view')
     })
   })
