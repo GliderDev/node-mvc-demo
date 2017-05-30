@@ -1,19 +1,41 @@
+var Sequelize = require('sequelize')
+var config = require('.././lib/config')
 
+var sequelize = new Sequelize(
+  config.orm.db,
+  config.orm.user,
+  config.orm.password, {
+    // Disables console logging queries
+    logging: false
+  }
+)
 // Categories list functionality
 
 exports.createCategory = function (req, res, next) {
-  console.log('create cat')
   let domain = req.app.locals.Domain
+
   domain.findAll({
-    attribute: ['domain', 'domain_id', 'description', 'status']
+    attributes: [[sequelize.fn('COUNT', sequelize.col('domain_id')), 'domainCount']]
+  }).then(function (allDomainData) {
+    console.log('domainCount =' + JSON.stringify(allDomainData))
+  })
+
+  domain.findAndCountAll({
+    attribute: ['domain', 'domain_id', 'description', 'status'],
+    offset: 0,
+    limit: 3
   }).then(function (result) {
+    console.log('domainCount =' + JSON.stringify(result))
     if (result) {
       let html = generateOptions(result)
       res.render('categories/create', {
         href: 'logout',
         title: 'ytets',
         html: html,
-        allDomain: result
+        allDomain: result.rows,
+        totalCount: result.count,
+        offset: 0,
+        limitCount: 3
       })
     } else {
       req.app.locals.logger.error('Domain is empty')
@@ -122,14 +144,41 @@ exports.saveSubCategory = function (req, res) {
   })
 }
 
-// exports.getCategoryList = function (req, res) {
-//   let domain = req.app.locals.Domain
-//   domain.findAll({
-//     attribute: ['domain_id', 'domain', 'status']
-//   }).then(function (allDomainData) {
-//     console.log('allDomin =' + allDomainData)
-//   })
-// }
+exports.changeToApprove = function (req, res) {
+  var domainId = req.params.domain_id
+  let domain = req.app.locals.Domain
+  console.log('allDomin =' + domainId)
+
+  domain.update({
+    status: 1
+  }, {
+    where: {
+      domain_id: domainId
+    }
+  }).then(function (updateResult) {
+    console.log(updateResult)
+  })
+
+  res.redirect('/categories/create')
+}
+
+exports.changeToReject = function (req, res) {
+  var domainId = req.params.domain_id
+  let domain = req.app.locals.Domain
+  console.log('allDomin =' + domainId)
+
+  domain.update({
+    status: 0
+  }, {
+    where: {
+      domain_id: domainId
+    }
+  }).then(function (updateResult) {
+    console.log(updateResult)
+  })
+
+  res.redirect('/categories/create')
+}
 
 function generateOptions (optionData) {
   let html = ''

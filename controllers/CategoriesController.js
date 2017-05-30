@@ -6,6 +6,7 @@
 
 var path = require('path')
 var authHelper = require('../lib/authHelper')
+var paginate = require('express-paginate')
 
 // Creating categories model object
 var categoriesModel = require('.././models/Categories')
@@ -37,11 +38,17 @@ module.exports.controller = function (app) {
     categoriesModel.saveSubCategory
   )
 
-  // app.get(
-  //   '/categories/list',
-  //   authHelper.ensureAuth,
-  //   categoriesModel.listCategory
-  // )
+  app.get(
+    '/categories/approve/:domain_id',
+    authHelper.ensureAuth,
+    categoriesModel.changeToApprove
+  )
+
+  app.get(
+    '/categories/reject/:domain_id',
+    authHelper.ensureAuth,
+    categoriesModel.changeToReject
+  )
 
   // app.get(
   //   '/categories/getList',

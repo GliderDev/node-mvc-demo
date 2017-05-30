@@ -41,6 +41,8 @@ var AclSeq = require('acl-sequelize')
 var helmet = require('helmet')
 // To show flash messages
 var flash = require('connect-flash')
+// To handle Pagination
+var paginate = require('express-paginate')
 
 // Configuring  csrf and bodyParser middlewares
 var csrfProtection = csrf({ cookie: true })
@@ -53,6 +55,9 @@ var app = express()
 // Helmets middleware added to secure app
 // by setting various HTTP headers
 app.use(helmet())
+
+// Used for pagination
+app.use(paginate.middleware(10, 50))
 
 // Setting Loggers
 var logger = require('./lib/logger')
@@ -99,16 +104,24 @@ app.use(expressFileUpload())
 
 // ======================== Authorization Configuration ======================
 
-var Subdomain = require('./models/orm/Subdomain')
+var sequelize = new Sequelize(
+  config.orm.db,
+  config.orm.user,
+  config.orm.password, {
+    // Disables console logging queries
+    logging: false
+  }
+)
+var Subdomain = require('./models/orm/Subdomain')(Sequelize, sequelize)
 app.locals.Subdomain = Subdomain
 
-var Codebase = require('./models/orm/Codebase')
+var Codebase = require('./models/orm/Codebase')(Sequelize, sequelize)
 app.locals.Codebase = Codebase
 
-var Domain = require('./models/orm/Domain')
+var Domain = require('./models/orm/Domain')(Sequelize, sequelize)
 app.locals.Domain = Domain
 
-var User = require('./models/orm/User')
+var User = require('./models/orm/User')(Sequelize, sequelize)
 app.locals.User = User
 // Configuring the local strategy for use by Passport.
 passport.use('login', new LocalStrategy({

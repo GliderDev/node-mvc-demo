@@ -82,22 +82,32 @@
                       <tbody>                       
                         <%
                         for( var i=0; i< Object.keys(allDomain).length; i++){
-                          console.log(allDomain[i])
+                        
                            %>
 
                         <tr>
-                            <td><%= allDomain[i].status %></td>
-                            <td><%=(allDomain[i].status === 0) ? 'Pending' : 'Active'  %></td>
+                            <td><%= allDomain[i].domain %></td>
+                            <td><%=(allDomain[i].status === 0)
+                                   ? 'Pending'  : 'Active'  %></td>
                             <td>
                               <% if (allDomain[i].status === 0) {%>
-                                <a class="btn btn-primary" href="">Approve</a>
+                               
+                                <a class="btn btn-primary" 
+                                   href="../categories/approve/<%=allDomain[i].domain_id%>">
+                                    Approve
+                                </a>
                               <% } else { %>
-                                <a class="btn btn-danger" href="">Reject</a>
+                                
+                                <a class="btn btn-danger" 
+                                   href="../categories/reject/<%=allDomain[i].domain_id%>">
+                                   Reject
+                                </a>
+                                
                                 <% } %>
                             </td>
                         </tr>
                         
-                        <% }  %>
+                        <% } %>
                       </tbody>
 
                     </table>
