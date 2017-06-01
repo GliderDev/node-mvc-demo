@@ -35,9 +35,9 @@ module.exports.getCounts = function (req, res, next) {
         error: false,
         data: dashCounts
       }
-      io.emit('update-dashboard-counts', returnData)
+      io.sockets.emit('update-dashboard-counts', returnData)
     }
   ], function (err) {
-    next(new Error(err))
+    throw new Error(err)
   })
 }

@@ -9,24 +9,6 @@ var dashboard = require('../models/Dashboard')
 module.exports.controller = function (app) {
   // Home Page
   app.get('/', authHelper.ensureAuth, function (req, res, next) {
-    let io = req.app.locals.io
-    // let logger = req.app.locals.logger
-    // Socket IO Connection listener
-    io.on('connection', function (socket) {
-      // logger.info('a user connected')
-
-      // Event Listener
-      socket.on('init counts', function () {
-        // Trigger event in front end to update dashboard counts
-        dashboard.getCounts(req, res, next)
-      })
-
-      // Disconnect listener
-      socket.on('disconnect', function () {
-        // logger.info('user disconnected')
-      })
-    })
-
     let userId = req.user.user_id
     var dashboardpos = []
     req.getConnection(function (err, connection) {
@@ -90,32 +72,24 @@ module.exports.controller = function (app) {
         }
       )
     })
-
-    // res.json('success')
   })
 
-  app.get('/excel', function (req, res, next) {
-    let User = app.locals.User
-
-    User.findAll({
-      attributes: ['user_id', 'first_name', 'last_name', 'email']
-    }).then(function (userData, err) {
-      if (err) console.log(err)
-      userData.forEach(function (user) {
-        req.app.locals.logger.info(user.user_id + '--' + user.first_name + '--' + user.last_name)
-      })
-      res.send('ok')
-    })
-
-    // User.findAll({
-    //   // attributes: ['user_id', 'first_name', 'last_name', 'email']
-    // }).then(function (err, userData) {
-    //   if (err) next(new Error(err))
-    //   req.app.locals.logger.info(userData)
-    //   // userData.forEach(function (user) {
-    //   //   req.app.locals.logger.info(user.user_id + '--' + user.first_name + '--' + user.last_name)
-    //   //   res.send('cool')
-    //   // })
-    // })
+  app.get('/dashboard/init-counts', function (req, res, next) {
+    dashboard.getCounts(req, res, next)
+    res.json({error: false, data: {status: true}})
   })
+
+  // app.get('/excel', function (req, res, next) {
+  //   let User = app.locals.User
+
+  //   User.findAll({
+  //     attributes: ['user_id', 'first_name', 'last_name', 'email']
+  //   }).then(function (userData, err) {
+  //     if (err) console.log(err)
+  //     userData.forEach(function (user) {
+  //       req.app.locals.logger.info(user.user_id + '--' + user.first_name + '--' + user.last_name)
+  //     })
+  //     res.send('ok')
+  //   })
+  // })
 } // End of Default Controller

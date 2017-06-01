@@ -4,6 +4,8 @@ function cancelAdd () {
 function cancelEdit () {
   window.location.href = '/users/view'
 }
+// declaring socket object
+var socket;
 
 $(document).ready(function () {
   // Calling function to show/hide html content based on user role
@@ -145,6 +147,21 @@ $(document).ready(function () {
 
     if (!error) $('#codeBaseForm').submit()
   })
+
+  $('#chat-send').click(function (event) {
+    var message = $('#chat-text').val()
+    $('#chat-text').val('')
+    // tell server to execute 'sendchat' and send along one parameter
+    socket.emit('sendchat', message)
+  })
+
+  // when the client hits ENTER on their keyboard
+  $('#chat-text').keypress(function (e) {
+    if (e.which === 13) {
+      $(this).blur()
+      $('#chat-send').focus().click()
+    }
+  })
 }) // End of Document ready event
 
 /**
@@ -176,10 +193,18 @@ function showRoleBasedData () {
  * To show Dashboard downloads, catagories, subcategories and active user counts
  */
 function getDashboardCounts () {
-  var socket = io()
+  socket = io()
+  var chatRoom = 'dashboard-chat'
+  var username = $('#user-first-name').text()
   if (window.location.pathname === '/') {
-    // Trigger event in back-end
-    socket.emit('init counts')
+    httpGet('/dashboard/init-counts', '', function (res){
+    })
+
+    // on connection to server, ask for user's name with an anonymous callback
+    socket.on('connect', function () {
+      // call the server-side function 'adduser' and send one parameter (value of prompt)
+      socket.emit('adduser', username)
+    })
   }
 
   // Listen to event to get dashboard counts
@@ -191,6 +216,13 @@ function getDashboardCounts () {
       console.log('Error in Socket Response' + JSON.stringify(responseData))
     }
   })
+
+  // listener, whenever the server emits 'updatechat', this updates the chat body
+  socket.on('updatechat', function (username, data) {
+    $('#chat-messages').append('<b>' + username + ':</b> ' + data + '<br>')
+  })
+
+
 }
 
 /**

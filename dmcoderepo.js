@@ -235,5 +235,6 @@ app.use(function (err, req, res, next) {
 // Receiving socket IO instance and returns app instance to app.js
 module.exports = function (io) {
   app.locals.io = io
+  require('./lib/socketHelper')(io)
   return app
 }
