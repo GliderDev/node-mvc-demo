@@ -175,7 +175,6 @@ exports.save_edit = function (req, res, next) {
 // Users delete functionality
 exports.delete = function (req, res, next) {
   var id = req.params.user_id
-
   req.getConnection(function (err, connection) {
     if (err) req.app.locals.logger.error(err)
     connection.query('DELETE FROM user  WHERE user_id = ? ', [id], function (err, rows) {

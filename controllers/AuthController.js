@@ -6,6 +6,7 @@
 
 var auth = require('../models/Auth')
 var authHelper = require('../lib/authHelper')
+var dashboard = require('../models/Dashboard')
 
 // Module definition
 module.exports.controller = function (app) {
@@ -15,7 +16,7 @@ module.exports.controller = function (app) {
   var csrfMiddleware = app.locals.csrfProtection
 
   // HTTP GET - login page route
-  app.get('/auth/login', csrfMiddleware, function (req, res) {
+  app.get('/auth/login', csrfMiddleware, function (req, res, next) {
     res.render('auth/login', {
       csrf: req.csrfToken()
     })
@@ -30,19 +31,19 @@ module.exports.controller = function (app) {
     ),
     parseForm,
     auth.rememberMe,
-    csrfMiddleware, function (req, res) {
+    csrfMiddleware, function (req, res, next) {
       res.redirect('/')
     }
   )
 
   // HTTP GET - logout page route
-  app.get('/auth/logout', function (req, res) {
+  app.get('/auth/logout', function (req, res, next) {
     req.logout()
     res.redirect('/')
   })
 
   // HTTP GET - Register page route
-  app.get('/auth/register', csrfMiddleware, function (req, res) {
+  app.get('/auth/register', csrfMiddleware, function (req, res, next) {
     res.render('auth/register', {
       csrf: req.csrfToken()
     })
@@ -52,7 +53,7 @@ module.exports.controller = function (app) {
   app.post('/auth/register', csrfMiddleware, parseForm, auth.registerUser)
 
   // HTTP GET - Forgot password page route
-  app.get('/auth/forgot', csrfMiddleware, function (req, res) {
+  app.get('/auth/forgot', csrfMiddleware, function (req, res, next) {
     res.render('auth/forgot', {
       csrf: req.csrfToken()
     })
@@ -66,7 +67,7 @@ module.exports.controller = function (app) {
 
   // HTTP GET - Reset password page route
   app.get('/auth/reset/:token', csrfMiddleware,
-    auth.validatePasswordResetToken, function (req, res) {
+    auth.validatePasswordResetToken, function (req, res, next) {
       res.render('auth/reset', {
         csrf: req.csrfToken(),
         token: req.params.token
@@ -86,7 +87,7 @@ module.exports.controller = function (app) {
   app.get(
     '/auth/user-role',
     authHelper.ensureAuth,
-    function (req, res) {
+    function (req, res, next) {
       app.locals.acl.userRoles(req.user.user_id, function (err, roles) {
         if (err) {
           let errData = {

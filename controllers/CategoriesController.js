@@ -4,9 +4,7 @@
  * This controller is used for the categories and its functionalities
  */
 
-var path = require('path')
 var authHelper = require('../lib/authHelper')
-var paginate = require('express-paginate')
 
 // Creating categories model object
 var categoriesModel = require('.././models/Categories')
@@ -20,22 +18,16 @@ module.exports.controller = function (app) {
     categoriesModel.createCategory
   )
 
+  app.get(
+    '/categories/create/:page',
+    authHelper.ensureAuth,
+    categoriesModel.createCategory
+  )
+
   app.post(
     '/categories/create',
     authHelper.ensureAuth,
     categoriesModel.saveCategory
-  )
-
-  app.post(
-    '/categories/sub_category',
-    authHelper.ensureAuth,
-    categoriesModel.getSubCategory
-  )
-
-  app.post(
-    '/categories/sub_cat_create',
-    authHelper.ensureAuth,
-    categoriesModel.saveSubCategory
   )
 
   app.get(
@@ -51,9 +43,9 @@ module.exports.controller = function (app) {
   )
 
   // app.get(
-  //   '/categories/getList',
+  //   '/categories/list',
   //   authHelper.ensureAuth,
-  //   categoriesModel.getCategoryList
+  //   categoriesModel.list
   // )
 }
 

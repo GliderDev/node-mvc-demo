@@ -1,5 +1,4 @@
 var config = require('../lib/config')
-var User = require('./orm/User')
 
 /**
  * Remember me functionality middleware
@@ -27,6 +26,7 @@ var forgotPassword = function (req, res) {
   let async = require('async')
   let crypto = require('crypto')
   let emailModule = require('../lib/email')
+  let User = req.app.locals.User
 
   async.waterfall([
     function (done) {
@@ -127,6 +127,7 @@ var forgotPassword = function (req, res) {
 var validatePasswordResetToken = function (req, res, next) {
   let token = req.params.token
   let datetime = require('node-datetime')
+  let User = req.app.locals.User
 
   if (token.length && token !== '') {
     User.findOne({
@@ -179,6 +180,7 @@ var resetPassword = function (req, res, next) {
   let password = req.body.password
   let confirmPassword = req.body.confirmPassword
   let bcrypt = require('bcrypt')
+  let User = req.app.locals.User
 
   if (password.length &&
       confirmPassword.length &&
@@ -243,7 +245,7 @@ var registerUser = function (req, res, next) {
   let lastName = req.body.l_name
   let email = req.body.email
   let password = req.body.password
-  let datetime = require('node-datetime');
+  let datetime = require('node-datetime')
   let dob = datetime.create(req.body.dob).format('Y-m-d')
   let doj = datetime.create().format('Y-m-d')
   let phone = req.body.phone
@@ -252,6 +254,8 @@ var registerUser = function (req, res, next) {
   let profilePic = ''
   let path = require('path')
   let bcrypt = require('bcrypt')
+  let User = req.app.locals.User
+  let dashboard = require('../models/Dashboard')
 
   if (imgObj) {
     profilePic = imgObj.name
@@ -285,6 +289,10 @@ var registerUser = function (req, res, next) {
     }).then(function (user) {
       // Add new user with User role
       req.app.locals.acl.addUserRoles(user.user_id, 'user')
+
+      // Trigger event in front end to update dashboard counts
+      dashboard.getCounts(req, res, next)
+
       req.flash(
         'success',
         'Registration done successfully, Please login to continue'

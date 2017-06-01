@@ -1,41 +1,37 @@
-var Sequelize = require('sequelize')
-var config = require('.././lib/config')
 
-var sequelize = new Sequelize(
-  config.orm.db,
-  config.orm.user,
-  config.orm.password, {
-    // Disables console logging queries
-    logging: false
-  }
-)
 // Categories list functionality
 
 exports.createCategory = function (req, res, next) {
   let domain = req.app.locals.Domain
-
+  let sequelize = req.app.locals.sequelize
   domain.findAll({
     attributes: [[sequelize.fn('COUNT', sequelize.col('domain_id')), 'domainCount']]
   }).then(function (allDomainData) {
-    console.log('domainCount =' + JSON.stringify(allDomainData))
+    // console.log('domainCount =' + JSON.stringify(allDomainData))
   })
+
+  let page = (req.params.page) ? req.params.page : 1
+  let limit = 3
+  let offset = (page - 1) * limit
 
   domain.findAndCountAll({
     attribute: ['domain', 'domain_id', 'description', 'status'],
-    offset: 0,
-    limit: 3
+    offset: offset,
+    limit: limit,
+    order: [['domain_id', 'DESC']]
   }).then(function (result) {
-    console.log('domainCount =' + JSON.stringify(result))
+    // console.log('domainCount =' + JSON.stringify(result))
     if (result) {
-      let html = generateOptions(result)
+      let html = generateOptions(result.rows)
+      console.log('html' + html)
       res.render('categories/create', {
-        href: 'logout',
-        title: 'ytets',
+
         html: html,
         allDomain: result.rows,
         totalCount: result.count,
-        offset: 0,
-        limitCount: 3
+        offset: offset,
+        limitCount: limit,
+        page: page
       })
     } else {
       req.app.locals.logger.error('Domain is empty')
@@ -44,39 +40,37 @@ exports.createCategory = function (req, res, next) {
   })
 }
 
-exports.saveCategory = function (req, res) {
-  console.log(req.body)
+exports.saveCategory = function (req, res, next) {
+  let dashboard = require('../models/Dashboard')
+  let domain = req.app.locals.Domain
+  let data = {
+    domain: req.body.title,
+    description: req.body.description
+  }
 
-  req.getConnection(function (err, connection) {
-    var data = {
-      domain: req.body.title,
-      description: req.body.description
-    }
+  req.app.locals.Domain.create(data).then(function (domainData) {
+    // Trigger event in front end to update dashboard counts
+    dashboard.getCounts(req, res, next)
 
-    req.app.locals.Domain.create(data).then(function (domainData) {
-      // console.log(domainData)
+    domain.findAll({
+      attribute: 'domain'
+    }).then(function (allDomain) {
+      let allDomainHtml = '<option class="cat_default" value="">' +
+        '--Select category--</option>' +
+        generateOptions(allDomain) +
+        '<option class="cat_new" value="createNew">' +
+        '--Create new--</option>'
 
-      let domain = req.app.locals.Domain
-      domain.findAll({
-        attribute: 'domain'
-      }).then(function (allDomain) {
-        let allDomainHtml = '<option class="cat_default" value="">' +
-          '--Select category--</option>' +
-          generateOptions(allDomain) +
-          '<option class="cat_new" value="createNew">' +
-          '--Create new--</option>'
-
-        res.json({error: false,
-          data: {
-            id: domainData.domain_id,
-            html: allDomainHtml
-          }})
-      })
+      res.json({error: false,
+        data: {
+          id: domainData.domain_id,
+          html: allDomainHtml
+        }})
     })
   })
 }
 
-exports.getSubCategory = function (req, res) {
+exports.getSubCategory = function (req, res, next) {
   let Subdomain = req.app.locals.Subdomain
 
   req.getConnection(function (err, connection) {
@@ -106,7 +100,7 @@ exports.getSubCategory = function (req, res) {
   })
 }
 
-exports.saveSubCategory = function (req, res) {
+exports.saveSubCategory = function (req, res, next) {
   req.getConnection(function (err, connection) {
     var data = {
       sub_domain: req.body.subCategory,
@@ -144,7 +138,7 @@ exports.saveSubCategory = function (req, res) {
   })
 }
 
-exports.changeToApprove = function (req, res) {
+exports.changeToApprove = function (req, res, next) {
   var domainId = req.params.domain_id
   let domain = req.app.locals.Domain
   console.log('allDomin =' + domainId)
@@ -162,7 +156,7 @@ exports.changeToApprove = function (req, res) {
   res.redirect('/categories/create')
 }
 
-exports.changeToReject = function (req, res) {
+exports.changeToReject = function (req, res, next) {
   var domainId = req.params.domain_id
   let domain = req.app.locals.Domain
   console.log('allDomin =' + domainId)
@@ -180,7 +174,15 @@ exports.changeToReject = function (req, res) {
   res.redirect('/categories/create')
 }
 
+// exports.list = function (req, res, next) {
+
+//   res.render('/categories/list')
+// }
+
+
+
 function generateOptions (optionData) {
+  // console.log('optData' + JSON.stringify(optionData))
   let html = ''
   if (optionData.length) {
     optionData.forEach(function (element) {

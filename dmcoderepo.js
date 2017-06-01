@@ -41,23 +41,28 @@ var AclSeq = require('acl-sequelize')
 var helmet = require('helmet')
 // To show flash messages
 var flash = require('connect-flash')
-// To handle Pagination
-var paginate = require('express-paginate')
-
-// Configuring  csrf and bodyParser middlewares
-var csrfProtection = csrf({ cookie: true })
-var parseForm = bodyParser.urlencoded({ extended: false })
+// Gets application configurations
 var config = require('./lib/config')
 
+// ======================== Basic Configurations =============================
 // Creating express object
 var app = express()
+
+// Adding csrf middleware to the application
+var csrfProtection = csrf({ cookie: true })
+app.locals.csrfProtection = csrfProtection
+
+// Adding body parser middleware to the application
+var parseForm = bodyParser.urlencoded({ extended: false })
+app.locals.parseForm = parseForm
+app.use(parseForm)
+
+// Adding file upload middleware to application
+app.use(expressFileUpload())
 
 // Helmets middleware added to secure app
 // by setting various HTTP headers
 app.use(helmet())
-
-// Used for pagination
-app.use(paginate.middleware(10, 50))
 
 // Setting Loggers
 var logger = require('./lib/logger')
@@ -68,19 +73,20 @@ app.use(require('morgan')('combined', { 'stream': logger.stream }))
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '/views'))
 
-// Adding th public folder as static folder to server css, js and images files
+// Adding static middleware to the application
+// Static middleware is used to serve css, js and images files.
 app.use(express.static(path.join(__dirname, 'public')))
 
-// Database connection string
+// Adding express mysql middleware to the application
 app.use(connection(mysql, config.db))
 
-// Setting Session
+// Adding session management middleware to the application
 app.use(session(config.session))
 
-// Adding CSRF middleware
+// Adding cookie management middleware to the application
 app.use(cookieParser('pass'))
 
-// flash message middleware
+// Adding flash message middleware to the application
 app.use(flash())
 app.use(function (req, res, next) {
   // if there's a flash message, transfer
@@ -96,81 +102,86 @@ app.use(function (req, res, next) {
 var flashHelper = require('./lib/flashHelper')
 app.locals.flashHelper = flashHelper
 
-app.locals.csrfProtection = csrfProtection
-app.locals.parseForm = parseForm
-// app.locals.parseFileUploads = parseFileUploads;
-app.use(parseForm)
-app.use(expressFileUpload())
+// ======================== ORM Configuration ================================
+var ormConnection = new Sequelize(
+    config.orm.db,
+    config.orm.user,
+    config.orm.password, {
+      logging: false // Disables console logging queries
+    }
+)
+
+app.locals.sequelize = ormConnection
+
+var Subdomain = require('./models/orm/Subdomain')(Sequelize, ormConnection)
+app.locals.Subdomain = Subdomain
+
+var Codebase = require('./models/orm/Codebase')(Sequelize, ormConnection)
+app.locals.Codebase = Codebase
+
+var Domain = require('./models/orm/Domain')(Sequelize, ormConnection)
+app.locals.Domain = Domain
+
+var User = require('./models/orm/User')(Sequelize, ormConnection)
+app.locals.User = User
+
+// ======================== RBAC Configuring using ORM ========================
+var acl = new Acl(new AclSeq(ormConnection, { prefix: 'acl_' }))
+app.locals.acl = acl
 
 // ======================== Authorization Configuration ======================
 
-var sequelize = new Sequelize(
-  config.orm.db,
-  config.orm.user,
-  config.orm.password, {
-    // Disables console logging queries
-    logging: false
-  }
-)
-var Subdomain = require('./models/orm/Subdomain')(Sequelize, sequelize)
-app.locals.Subdomain = Subdomain
-
-var Codebase = require('./models/orm/Codebase')(Sequelize, sequelize)
-app.locals.Codebase = Codebase
-
-var Domain = require('./models/orm/Domain')(Sequelize, sequelize)
-app.locals.Domain = Domain
-
-var User = require('./models/orm/User')(Sequelize, sequelize)
-app.locals.User = User
 // Configuring the local strategy for use by Passport.
-passport.use('login', new LocalStrategy({
-  passReqToCallback: true
-},
-function (req, email, password, cb) {
-  // Validating before querying
-  if (email === '') {
-    req.flash('error', 'Email provided is empty')
-    return cb(null, false)
-  }
+passport.use(
+  'login',
+  new LocalStrategy({
+    passReqToCallback: true
+  },
+  function (req, email, password, cb) {
+    // Validating before querying
+    if (email === '') {
+      req.flash('error', 'Email provided is empty')
+      return cb(null, false)
+    }
 
-  if (password === '') {
-    req.flash('error', 'Password provided is empty')
-    return cb(null, false)
-  }
+    if (password === '') {
+      req.flash('error', 'Password provided is empty')
+      return cb(null, false)
+    }
 
-  if (email && password) {
-    User.findOne({
-      where: {
-        email: email
-      }
-    }).then(function (user) {
-      let userData = JSON.stringify(user)
-      if (userData !== 'null') {
-        bcrypt.compare(password, user.password, function (err, res) {
-          if (err) {
-            logger.error(err)
-            req.flash(
-              'error',
-              'Sorry, Error occurred during password verification'
-            )
-            return cb(null, false)
-          }
-          if (res) {
-            return cb(null, user)
-          } else {
-            req.flash('error', 'Incorrect password')
-            return cb(null, false)
-          }
-        })
-      } else {
-        // Setting login status since passport flash is not working
-        req.flash('error', 'Incorrect username or password.')
-        return cb(null, false)
-      }
-    })
-  }
-}))
+    if (email && password) {
+      User.findOne({
+        where: {
+          email: email
+        }
+      }).then(function (user) {
+        let userData = JSON.stringify(user)
+        if (userData !== 'null') {
+          bcrypt.compare(password, user.password, function (err, res) {
+            if (err) {
+              logger.error(err)
+              req.flash(
+                'error',
+                'Sorry, Error occurred during password verification'
+              )
+              return cb(null, false)
+            }
+            if (res) {
+              return cb(null, user)
+            } else {
+              req.flash('error', 'Incorrect password')
+              return cb(null, false)
+            }
+          })
+        } else {
+          // Setting login status since passport flash is not working
+          req.flash('error', 'Incorrect username or password.')
+          return cb(null, false)
+        }
+      })
+    }
+  })
+)
 
 // Configure Passport authenticated session persistence.
 passport.serializeUser(function (user, cb) {
@@ -199,18 +210,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.locals.passport = passport
 
-// ======================== RBAC Configuring ========================
-var ormConnection = new Sequelize(
-    config.orm.db,
-    config.orm.user,
-    config.orm.password, {
-      // Disables console logging queries
-      logging: false
-    }
-)
-var acl = new Acl(new AclSeq(ormConnection, { prefix: 'acl_' }))
-app.locals.acl = acl
-
+// =========================== Including Routes ========================
 // dynamically include routes (Controller)
 fs.readdirSync('./controllers').forEach(function (file) {
   if (file.substr(-3) === '.js') {
@@ -232,6 +232,7 @@ app.use(function (err, req, res, next) {
   // res.render('500')
 })
 
+// Receiving socket IO instance and returns app instance to app.js
 module.exports = function (io) {
   app.locals.io = io
   return app

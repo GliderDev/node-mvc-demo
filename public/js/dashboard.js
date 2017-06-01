@@ -74,98 +74,78 @@ $(document).ready(function () {
     if (!error) $('#userForm').submit()
   })
 
-  $('#category-list').on('change', function () {
-    var value = this.value
-
-    if (value === '-1') {
-      $('#sub-category-list').prop('disabled', true)
-    } else {
-      $('#sub-category-list').prop('disabled', false)
-    }
-
-    if (value === 'createNew') {
-      $('#create-category').modal()
-      $('#modalSave').click(function (event) {
-        event.preventDefault()
-        var title = $('#category_name').val()
-        var description = $('#category_desc').val()
-        if (title !== '' && description !== '') {
-          $.ajax({
-            type: 'POST',
-            url: '/categories/create',
-            data: {title: title, description: description},
-            cache: false,
-            success: function (optionData) {
-              if (!optionData.error && optionData.data.html.length) {
-                var id = optionData.data.id
-                $('#category-list').html(optionData.data.html)
-                $('.cat_' + id).attr('selected', true)
-                window.alert('success')
-              } else {
-                $('.cat_default').attr('selected', true)
-              }
-            },
-            error: function (error) {
-              console.log('error')
-              window.alert('error' + error)
-            }
-          })
-        }
-      })
-    }
-    var categoryId = $('#category-list').val()
-    $.ajax({
-      type: 'POST',
-      url: '/categories/sub_category',
-      data: {categoryId: categoryId},
-      cache: false,
-      success: function (successData) {
-        console.log(successData.data)
-        $('#sub-category-list').html(successData.data.html)
-      },
-      error: function (error) {
-        console.log('error')
-      }
-    })
-  })
-
-  $('#sub-category-list').on('change', function (event) {
-    event.preventDefault()
-    var value = this.value
-    if (value === 'createNewSub') {
-      $('#create-sub-category').modal()
-      $('#modalSubCatSave').click(function (event) {
-        var domainId = $('#category-list').val()
-        var subCat = $('#sub_category_name').val()
-        var subCatDesc = $('#sub_category_desc').val()
-
+  $('#cat_new').click(function (clickEvent) {
+    clickEvent.preventDefault()
+    $('#create-category').modal()
+    $('#modalSave').click(function (event) {
+      event.preventDefault()
+      var title = $('#category_name').val()
+      var description = $('#category_desc').val()
+      if (title !== '' && description !== '') {
         $.ajax({
           type: 'POST',
-          url: '/categories/sub_cat_create',
-          data: {subCategory: subCat, description: subCatDesc, domain_id: domainId},
+          url: '/categories/create',
+          data: {title: title, description: description},
           cache: false,
-          success: function (successData) {
-            alert('successsss')
-            console.log('sadasd')
-            console.log('success data ' + successData)
-            if (!successData.error && successData.data.html.length) {
-              var id = successData.data.id
-              console.log('testing ' + successData.data.html)
-              $('#sub-category-list').html(successData.data.html)
-              $('.sub_cat_' + id).attr('selected', true)
+          success: function (optionData) {
+            if (!optionData.error && optionData.data.html.length) {
+              var id = optionData.data.id
+              $('#category-list').html(optionData.data.html)
+              $('.cat_' + id).attr('selected', true)
+              window.location.reload()
+              // window.alert('success')
             } else {
-              console.log('else case')
-              $('.sub_cat_default').attr('selected', true)
+              $('.cat_default').attr('selected', true)
             }
           },
           error: function (error) {
             console.log('error')
+            window.alert('error' + error)
           }
         })
+      }
+    })
+  })
+
+  // Sortable widgets
+  $('.connectedSortable').sortable({
+    stop: function (event, ui) {
+      var arr = {}
+      $('.connectedSortable').each(function () {
+        var thisId = $(this).attr('id')
+        var arrId = []
+        $('#' + thisId + ' > div').map(function () {
+          arrId.push(this.id)
+        })
+        // console.log("inner array -> "+JSON.stringify(arrId));
+        arr[thisId] = JSON.parse(JSON.stringify(arrId))
+        // console.log("inner json -> "+JSON.stringify(arr));
+      })
+
+      $.ajax({
+        type: 'POST',
+        url: '/dashboard/userdashboard',
+        data: { position: JSON.stringify(arr) },
+        cache: false,
+        success: function (optionData) {
+        },
+        error: function (error) {
+          console.log('error')
+        }
       })
     }
   })
-})
+
+  $('#submitBtn').click(function (event) {
+    event.preventDefault()
+
+    // var catValue = $('#category-list').val()
+    // var title = $('#title').val()
+    // var description = $('#desc').val()
+
+    if (!error) $('#codeBaseForm').submit()
+  })
+}) // End of Document ready event
 
 /**
  * To show/hide html content based on user role
@@ -196,33 +176,32 @@ function showRoleBasedData () {
  * To show Dashboard downloads, catagories, subcategories and active user counts
  */
 function getDashboardCounts () {
+  var socket = io()
   if (window.location.pathname === '/') {
-    let dashboardData = ''
-    let socket = io()
     // Trigger event in back-end
     socket.emit('init counts')
-
-    // Listen to event to get dashboard counts
-    socket.on('update-dashboard-counts', function (responseData) {
-      if (!responseData.error) {
-        // Changes Dashboard counts using jQuery
-        changeDashboardCounters(responseData.data)
-      } else {
-        console.log('Error in Socket Response' + JSON.stringify(responseData))
-      }
-    })
   }
+
+  // Listen to event to get dashboard counts
+  socket.on('update-dashboard-counts', function (responseData) {
+    if (!responseData.error) {
+      // Changes Dashboard counts using jQuery
+      changeDashboardCounters(responseData.data)
+    } else {
+      console.log('Error in Socket Response' + JSON.stringify(responseData))
+    }
+  })
 }
 
 /**
  * To do DOM changes to show dashboard counts
- * @param {object} dashboardData 
+ * @param {object} dashboardData
  */
 function changeDashboardCounters (dashboardData) {
   $('#total-downloads').text(dashboardData.downloads)
   $('#total-cat').text(dashboardData.categories)
-  $('#total-sub-cat').text(dashboardData.subCategories)
-  $('#active-users').text(dashboardData.users)
+  $('#total-users').text(dashboardData.totalUsers)
+  // $('#active-users').text(dashboardData.activeUsers)
 }
 
 /**

@@ -1,6 +1,6 @@
-<%- include('./../layouts/dashboard/header', {title, href}) %>
+<%- include('./../layouts/dashboard/header') %>
 
-<%- include('./../layouts/dashboard/sidebar', {title}) %>
+<%- include('./../layouts/dashboard/sidebar')%>
 
 
 <aside class="right-side">
@@ -23,39 +23,11 @@
 					
 					<div class="col-md-12">
 
-          <div class="col-md-6">
+          <div class="col-md-6 mtop10" >
             <!-- general form elements -->
-            <div class="box box-primary">
-
-                <form id="categoryForm" role="form" method="post" action="/categories/add" 
-											enctype="multipart/form-data">
-											
-                    <div class="box-body">
-                        
-                          <div class="form-group">
-                                <label>Main category</label>
-                        
-                                <select class="form-control" name="category-list" id="category-list">
-									
-                                    <option class="cat_default" value="-1">--Select category--</option>
-                                    <%- html %>	
-									<option class="cat_new" value="createNew">--Create new--</option>
-                               
-                                </select>
-                          </div>
-
-                          <div class="form-group">
-                                <label>Sub category</label>
-                                <select class="form-control" name="sub-category-list" id="sub-category-list" disabled>
-                               
-                                </select>                            
-						    					</div>
-
-                    </div> <!-- /.box-body -->
-
-                </form>  
-            </div>
-
+               <input type= "button" class="cat_new btn btn-primary" id="cat_new" value="Create New">
+                    
+            
           </div> 
 					</div>
 
@@ -115,11 +87,18 @@
                   
 									<div class="box-footer clearfix">
                   	<ul class="pagination pagination-sm no-margin pull-right">
-                    	<li><a href="#">&laquo;</a></li>
-                      <li><a href="#">1</a></li>
-                      <li><a href="#">2</a></li>
-                      <li><a href="#">3</a></li>
-                      <li><a href="#">&raquo;</a></li>
+                    	<% if(totalCount !== 0) {
+                            var currentPage = page
+                            console.log(currentPage)
+                            var page = Math.ceil(totalCount / limitCount)
+                            for(var i = 1; i <= page; i++ ){ %>
+                              	<li class ="cat-list <% if (currentPage == i){ %>active<% } %>" id="catPage_<%= i%>">
+                                  <a class="cat-pagination" href="/categories/create/<%= i %>" ><%=i%></a>
+                                </li>
+
+                      <%     }  
+                         }   
+                      %>
                     </ul>
                   </div>
               </div><!-- /.box -->
@@ -127,66 +106,7 @@
           </div> <!-- end of new class -->
 					
 						<!-- new class-->
-					<div class="col-md-6">
-
-							<div class="box">
-
-                  <div class="box-header">
-                      <h3 class="box-title">Sub Category List</h3>
-                  </div><!-- /.box-header -->
-
-                  <div class="box-body">
-                    <table class="table table-bordered">
-                      
-											<tr>
-                        <th style="width: 10px">#</th>
-                        <th>Category</th>
-											  <th>Sub Category</th>
-												<th>Status</th>
-                        <th style="width: 40px">Action</th>
-                      </tr>
-                      
-											<tr>
-                        <td>1.</td>
-                        <td>PHP</td>
-                        <td>Yii</td>
-												<td>Active</td>
-                        <td><button class="btn btn-danger">Reject</td>
-                      </tr>
-
-                      <tr>
-                        <td>2.</td>
-                        <td>PHP</td>
-                        <td>Yii2</td>
-												<td>Active</td>
-                        <td><button class="btn btn-danger">Reject</td>
-                      </tr>
-
-											<tr>
-                        <td>3.</td>
-                        <td>Python</td>
-                        <td>Django</td>
-												<td>Pending</td>
-                        <td><button class="btn btn-success">Approve</td>
-                      </tr>
-
-                    </table>
-                  </div><!-- /.box-body -->
-                  
-									<div class="box-footer clearfix">
-                  	<ul class="pagination pagination-sm no-margin pull-right">
-                    	<li><a href="#">&laquo;</a></li>
-                      <li><a href="#">1</a></li>
-                      <li><a href="#">2</a></li>
-                      <li><a href="#">3</a></li>
-                      <li><a href="#">&raquo;</a></li>
-                    </ul>
-                  </div>
-              </div><!-- /.box -->
-
-          </div> <!-- end of new class -->
 					
-
     	</div>
      
     </section>     
