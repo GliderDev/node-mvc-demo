@@ -5,7 +5,7 @@ function cancelEdit () {
   window.location.href = '/users/view'
 }
 // declaring socket object
-var socket;
+var socket
 
 $(document).ready(function () {
   // Calling function to show/hide html content based on user role
@@ -13,6 +13,8 @@ $(document).ready(function () {
 
   // Calling function to show dashboard counts
   getDashboardCounts()
+
+  getDashboardCodeBase()
 
   $('#submitBtn').click(function (event) {
     event.preventDefault()
@@ -74,6 +76,26 @@ $(document).ready(function () {
     }
 
     if (!error) $('#userForm').submit()
+  })
+
+  $('.delete-user').click(function (event) {
+    event.preventDefault()
+    var userId = $('.delete-user').attr('data-userid')
+    bootbox.confirm({
+      size: 'small',
+      message: 'Are you sure?',
+      callback: function (result) {
+        if (result === true) {
+          $.ajax({
+            url: '/users/delete/' + userId,
+            cache: false,
+            success: function (optionData) {
+              console.log('success')
+            }
+          })
+        }
+      }
+    })
   })
 
   $('#cat_new').click(function (clickEvent) {
@@ -197,7 +219,7 @@ function getDashboardCounts () {
   var chatRoom = 'dashboard-chat'
   var username = $('#user-first-name').text()
   if (window.location.pathname === '/') {
-    httpGet('/dashboard/init-counts', '', function (res){
+    httpGet('/dashboard/init-counts', '', function (res) {
     })
 
     // on connection to server, ask for user's name with an anonymous callback
@@ -221,8 +243,6 @@ function getDashboardCounts () {
   socket.on('updatechat', function (username, data) {
     $('#chat-messages').append('<b>' + username + ':</b> ' + data + '<br>')
   })
-
-
 }
 
 /**
@@ -401,4 +421,19 @@ function isJson (item) {
   }
 
   return false
+}
+
+function getDashboardCodeBase () {
+  console.log('getDashboardCodeBase')
+  $.ajax({
+    type: 'GET',
+    url: '/dashboard/codebase',
+    cache: false,
+    success: function (successData) {
+      console.log('success = ' + successData)
+    },
+    error: function (error) {
+      console.log('error')
+    }
+  })
 }

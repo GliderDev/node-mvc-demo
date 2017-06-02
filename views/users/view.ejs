@@ -56,8 +56,14 @@
                         <td><%=data[i].profile_pic %></td>
                                                     
                         <td>
-                            <a class="btn btn-primary" id="edit-user" href="../users/edit/<%=data[i].user_id%>">Edit</a>
-                            <a class="btn btn-danger" id="delete-user" href="../users/delete/<%=data[i].user_id%>">Delete</a>
+                            <a class="btn btn-primary edit-user" data-userid="<%=data[i].user_id%>" href="../users/edit/<%=data[i].user_id%>">Edit</a>
+                            <% if(data[i].user_id === 1) { %>
+                                <a class="btn btn-danger disabled" id="delete-user" 
+                                    href="../users/delete/<%=data[i].user_id%>" data-userid="<%=data[i].user_id%>" >Delete</a>
+                            <% } else { %>    
+                                <a class="btn btn-danger delete-user" 
+                                   href="../users/delete/<%=data[i].user_id%>" data-userid="<%=data[i].user_id%>">Delete</a>
+                            <% } %>    
                         </td>
 
                     </tr>
