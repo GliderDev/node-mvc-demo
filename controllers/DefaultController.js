@@ -101,6 +101,8 @@ module.exports.controller = function (app) {
   app.get('/excel', function (req, res, next) {
     let User = app.locals.User
     let datetime = require('node-datetime')
+    let fs = require('fs')
+    let path = require('path')
 
     // Require library
     const xl = require('excel4node')
@@ -253,23 +255,39 @@ module.exports.controller = function (app) {
         ws.cell(userDataRow, 4)
           .string(user.email)
           .style(tbodyLeftStyle)
+
+        // converting date to date object
         let dob = datetime.create(user.dob)
         dob = dob.format('m/d/y H:M')
-        console.log(dob)
         // Writing DOB
         ws.cell(userDataRow, 5)
           .date(dob)
           .style(tbodyCenterStyle)
 
-        // // Writing DOJ
-        // ws.cell(userDataRow, 6)
-        //   .string(user.doj)
-        //   .style(tbodyCenterStyle)
+        // converting date to date object
+        let doj = datetime.create(user.doj)
+        doj = doj.format('m/d/y H:M')
+
+        // Writing DOJ
+        ws.cell(userDataRow, 6)
+          .string(doj)
+          .style(tbodyCenterStyle)
       })
 
+      let filename = path.join(__dirname, '/../test.xlsx')
+
       // Writing excel to file
-      wb.write('test.xlsx')
-      res.send('k')
+      wb.write(filename, function (err, status) {
+        if (err) next(new Error(err))
+
+        // downloads the excel file
+        res.download(filename, function (err) {
+          if (err) next(new Error(err))
+
+          // Delete excel file after download
+          fs.unlink(filename)
+        })
+      })
     })
   })
 } // End of Default Controller
