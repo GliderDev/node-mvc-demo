@@ -1,0 +1,24 @@
+<table>
+  <thead style="border-collapse: collapse; border: 1px solid black;">
+    <tr>
+      <th style="text-align: center; padding: 8px; background-color: #4CAF50; color: white; border: 1px solid black;">UserId</th>
+      <th style="text-align: left; padding: 8px; background-color: #4CAF50; color: white; border: 1px solid black;">First Name</th>
+      <th style="text-align: left; padding: 8px; background-color: #4CAF50; color: white; border: 1px solid black;">First Name</th>
+      <th style="text-align: left; padding: 8px; background-color: #4CAF50; color: white; border: 1px solid black;">Email</th>
+      <th style="text-align: center; padding: 8px; background-color: #4CAF50; color: white; border: 1px solid black;">Date of Birth</th>
+      <th style="text-align: center; padding: 8px; background-color: #4CAF50; color: white; border: 1px solid black;">Date of Join</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% userData.forEach(function (user, i) { %>
+      <tr>
+        <td style="text-align: center; padding: 8px; border: 1px solid black;"><%= user.user_id %></td>
+        <td style="text-align: left; padding: 8px; border: 1px solid black;"><%= user.first_name %></td>
+        <td style="text-align: left; padding: 8px; border: 1px solid black;"><%= user.last_name %></td>
+        <td style="text-align: left; padding: 8px; border: 1px solid black;"><%= user.email %></td>
+        <td style="text-align: center; padding: 8px; border: 1px solid black;"><%= dateTime.create(user.dob).format('m/d/y H:M') %></td>
+        <td style="text-align: center; padding: 8px; border: 1px solid black;"><%= dateTime.create(user.doj).format('m/d/y H:M') %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

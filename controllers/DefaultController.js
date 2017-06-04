@@ -98,6 +98,55 @@ module.exports.controller = function (app) {
     res.json({error: false, data: {status: true}})
   })
 
+  app.get('/pdf', function (req, res, next) {
+    let User = app.locals.User
+    let pdf = require('html-pdf')
+    let path = require('path')
+    let fs = require('fs')
+    let filename = path.join(__dirname, '/../users.pdf')
+    let datetime = require('node-datetime')
+
+    User.findAll({
+      attributes: [
+        'user_id',
+        'first_name',
+        'last_name',
+        'email',
+        'dob',
+        'doj'
+      ]
+    }).then(function (userData, err) {
+      if (err) next(new Error(err))
+
+      // res.render('default/users', {userData: userData, dateTime: datetime})
+      // renders page returns the contents as callback function
+      res.render('default/users',
+        {
+          userData: userData,
+          dateTime: datetime
+        },
+        function (err, html) {
+          if (err) next(new Error(err))
+          // Writes html content to pdf file
+          pdf.create(html).toFile(filename, function (err, status) {
+            if (err) next(new Error(err))
+
+            if (status) {
+              // downloads the excel file
+              res.download(filename, function (err) {
+                if (err) next(new Error(err))
+
+                // Delete pdf file after download
+                fs.unlink(filename)
+              })
+            }
+          })
+        }
+      )
+    })
+  })
+
+  // An excel creation example
   app.get('/excel', function (req, res, next) {
     let User = app.locals.User
     let datetime = require('node-datetime')

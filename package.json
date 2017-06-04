@@ -26,6 +26,7 @@
     "express-myconnection": "^1.0.4",
     "express-session": "^1.15.2",
     "helmet": "^3.6.1",
+    "html-pdf": "^2.1.0",
     "morgan": "^1.8.1",
     "mysql": "^2.13.0",
     "node-datetime": "^1.0.0",
