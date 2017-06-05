@@ -228,8 +228,13 @@ app.use(function (req, res, next) {
 // 500 error handler (middleware)
 app.use(function (err, req, res, next) {
   logger.error(err.stack)
-  res.status(500).send('Error Occurred')
-  // res.render('500')
+  let errorData = {}
+  if (app.get('env') === 'development') {
+    errorData.message = err.message
+    errorData.stack = err.stack
+  }
+
+  res.render('500', {errorData: errorData})
 })
 
 // Receiving socket IO instance and returns app instance to app.js

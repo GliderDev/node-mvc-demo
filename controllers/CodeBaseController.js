@@ -21,6 +21,24 @@ module.exports.controller = function (app) {
     authHelper.ensureAuth,
     codeBaseModel.saveCodeBase
   )
+
+  app.get(
+    '/codebase/getCodebase',
+    authHelper.ensureAuth,
+    codeBaseModel.getCodeBase
+  )
+
+  app.get(
+    '/codebase/edit/:codebase_id',
+    authHelper.ensureAuth,
+    codeBaseModel.edit
+  )
+
+  app.get(
+    '/codebase/view/:codebase_id',
+    authHelper.ensureAuth,
+    codeBaseModel.viewCodebase
+  )
 }
 
 

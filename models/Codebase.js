@@ -1,3 +1,5 @@
+var dateTime = require('node-datetime')
+
 // Add codebase functionality
 
 exports.addCodeBase = function (req, res, next) {
@@ -29,7 +31,7 @@ exports.addCodeBase = function (req, res, next) {
           'value="' + user.user_id +
           '" />' + user.first_name + '</br>'
       })
-      console.log('html=' + html)
+
       res.render('codebase/add', {
         html: html,
         userHtml: userHtml,
@@ -43,7 +45,10 @@ exports.saveCodeBase = function (req, res, next) {
   let codebase = req.app.locals.Codebase
   let path = require('path')
   var fileUpload = req.files.uploads
-  // console.log('post' + JSON.stringify(req.body))
+  var userId = req.user.user_id
+
+  var now = dateTime.create()
+  var nowDate = now.format('Y-m-d H:M:S')
 
   fileUpload.mv(path.join(__dirname, '/../public/uploads/attachment', fileUpload.name), function (err) {
     if (err) {
@@ -57,9 +62,9 @@ exports.saveCodeBase = function (req, res, next) {
     description: req.body.description,
     domain_id: req.body.category_list,
     author_id: req.user.user_id,
-    uploaded_on: '',
-    updated_on: '',
-    updated_by: '',
+    uploaded_on: nowDate,
+    updated_on: nowDate,
+    updated_by: userId,
     downloads: 0,
     rating: 0,
     status: 0,
@@ -69,7 +74,62 @@ exports.saveCodeBase = function (req, res, next) {
   }
 
   codebase.create(data).then(function (codeBaseData) {
-    console.log('createddata' + codeBaseData)
     res.redirect('/')
+  })
+}
+
+exports.getCodeBase = function (req, res, next) {
+  let sequelize = req.app.locals.sequelize
+  let html = ''
+
+  sequelize.query('SELECT * FROM codebase as a JOIN  domain as b on a.domain_id = b.domain_id',
+   { type: sequelize.QueryTypes.SELECT})
+  .then(alldomain => {
+    alldomain.forEach(function (codebaseResult) {
+      html += '<li>' +
+      '<a href="/codebase/view/' + codebaseResult.codebase_id + '" class="text">' +
+      codebaseResult.name + '</span>' +
+      '<small class="label label-success"><i class="fa fa-book"></i> ' +
+      codebaseResult.domain + '</small>' +
+      '</li>'
+    })
+    res.send(html)
+  })
+}
+
+// TO DO
+exports.edit = function (req, res, next) {
+  let id = req.params.codebase_id
+  let codebase = req.app.locals.Codebase
+
+  codebase.findAll({
+    where: {
+      codebase_id: id
+    }
+  }).then(function (codeBaseResult) {
+    res.render('codebase/edit', {
+      data: codeBaseResult
+    })
+  })
+}
+
+exports.viewCodebase = function (req, res, next) {
+  let id = req.params.codebase_id
+  let sequelize = req.app.locals.sequelize
+  let sqlQuery = 'SELECT *,cb.description ' +
+  'FROM codebase AS cb ' +
+  'JOIN  domain AS d ' +
+  'ON cb.domain_id = d.domain_id ' +
+  'WHERE codebase_id = :codebase_id'
+
+  sequelize.query(sqlQuery,
+   { replacements: { codebase_id: id }, type: sequelize.QueryTypes.SELECT})
+  .then(alldomain => {
+    alldomain.forEach(function (allDomainData) {
+      res.render('codebase/view', {
+        data: allDomainData,
+        dateTime: dateTime
+      })
+    })
   })
 }

@@ -1,0 +1,61 @@
+<%- include('./../layouts/dashboard/header') %>
+
+<%- include('./../layouts/dashboard/sidebar')%>
+
+<aside class="right-side">
+<section class="content invoice">
+                    <!-- title row -->
+ 										<div class="row">
+                        <div class="col-xs-12">
+                            <h2 class="page-header">
+                                <i class="fa fa-globe"></i> <%= data.domain%>
+                            </h2>
+                        </div><!-- /.col -->
+                    </div>
+
+										<div class="row">
+                        <div class="col-xs-12">
+                            <h2 class="page-header">
+                                <i class="fa fa-book"></i> <%= data.name%>
+                                <small class="pull-right">
+																	<%
+                                      var dobFormat = dateTime.create(data.updated_on);
+                                      var dob = dobFormat.format('Y-m-d');
+                                	%>
+																Date: <%=dob %></small>
+                            </h2>
+                        </div><!-- /.col -->
+                    </div>
+
+                    <div class="row invoice-info">
+                        <div class="col-sm-12 invoice-col">
+                            <strong> Description </strong><br>
+														<%=data.description %>
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+										<br></br>
+										 <div class="row invoice-info">
+                        <div class="col-sm-6 invoice-col">
+                            <strong> Project Reference </strong> <br>
+														<%= data.projects%>
+                        </div><!-- /.col -->
+												<div class="col-sm-6 invoice-col">
+                            <strong> User Reference </strong> <br>
+                            <address>
+									<%
+										var data = data.reference %>
+
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+
+                    <!-- this row will not appear when printing -->
+                    <div class="row no-print">
+                        <div class="col-xs-12">
+                            <button class="btn btn-default" onclick="window.print();"><i class="fa fa-print"></i> Print</button>
+                            <button class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fa fa-download"></i> Download PDF</button>
+                        </div>
+                    </div>
+                </section><!-- /.content -->
+
+</aside>
+<%- include('./../layouts/dashboard/footer')%>

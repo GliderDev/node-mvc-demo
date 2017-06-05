@@ -80,17 +80,17 @@ $(document).ready(function () {
 
   $('.delete-user').click(function (event) {
     event.preventDefault()
-    var userId = $('.delete-user').attr('data-userid')
+    var userId = $(this).attr('data-userid')
     bootbox.confirm({
       size: 'small',
-      message: 'Are you sure?',
+      message: 'Are you sure you want to delete ?',
       callback: function (result) {
         if (result === true) {
           $.ajax({
             url: '/users/delete/' + userId,
             cache: false,
             success: function (optionData) {
-              console.log('success')
+              window.location.reload()
             }
           })
         }
@@ -141,9 +141,7 @@ $(document).ready(function () {
         $('#' + thisId + ' > div').map(function () {
           arrId.push(this.id)
         })
-        // console.log("inner array -> "+JSON.stringify(arrId));
         arr[thisId] = JSON.parse(JSON.stringify(arrId))
-        // console.log("inner json -> "+JSON.stringify(arr));
       })
 
       $.ajax({
@@ -424,13 +422,12 @@ function isJson (item) {
 }
 
 function getDashboardCodeBase () {
-  console.log('getDashboardCodeBase')
   $.ajax({
     type: 'GET',
-    url: '/dashboard/codebase',
+    url: '/codebase/getCodebase',
     cache: false,
     success: function (successData) {
-      console.log('success = ' + successData)
+      $('#topics').html(successData)
     },
     error: function (error) {
       console.log('error')

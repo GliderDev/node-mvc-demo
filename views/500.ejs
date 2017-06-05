@@ -1,1 +1,26 @@
-<h1>!Oops Server Error</h1>
+<%- include('./layouts/error/header') %>
+
+<div class="wrapper row-offcanvas row-offcanvas-left">
+
+    <div class="content">
+        <div class="error-page">
+            <h2 class="headline">500</h2>
+            <div class="error-content">
+                <h3><i class="fa fa-warning text-yellow"></i> Oops! Something went wrong.</h3>
+                <p>
+                    We will work on fixing that right away.
+                    Meanwhile, you may <a href="/">return to dashboard</a>
+                </p>
+            </div>
+        </div>
+
+        <% if (errorData.message) { %>
+            <h4>Error Message: <%= errorData.message %></h4>
+        <% } %>
+        <% if (errorData.stack) { %>
+            <pre>
+                <p><%= errorData.stack %></p>
+            </pre>
+        <% } %>
+    </div>
+<%- include('./layouts/login/footer') %>
