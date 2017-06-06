@@ -115,21 +115,65 @@ exports.edit = function (req, res, next) {
 
 exports.viewCodebase = function (req, res, next) {
   let id = req.params.codebase_id
+  let userModule = req.app.locals.User
   let sequelize = req.app.locals.sequelize
-  let sqlQuery = 'SELECT *,cb.description ' +
-  'FROM codebase AS cb ' +
-  'JOIN  domain AS d ' +
-  'ON cb.domain_id = d.domain_id ' +
-  'WHERE codebase_id = :codebase_id'
+  let async = require('async')
 
-  sequelize.query(sqlQuery,
-   { replacements: { codebase_id: id }, type: sequelize.QueryTypes.SELECT})
-  .then(alldomain => {
-    alldomain.forEach(function (allDomainData) {
+  async.waterfall([
+    function (done) {
+      let sqlQuery = 'SELECT *,cb.description ' +
+      'FROM codebase AS cb ' +
+      'JOIN  domain AS d ' +
+      'ON cb.domain_id = d.domain_id ' +
+      'WHERE codebase_id = :codebase_id'
+
+      sequelize.query(sqlQuery,
+      { replacements: { codebase_id: id }, type: sequelize.QueryTypes.SELECT})
+      .then(alldomain => {
+        done(null, alldomain)
+      })
+    },
+    function (alldomain, done) {
+      alldomain.forEach(function (allDomainData) {
+        try {
+          let userReference = JSON.parse(allDomainData.reference)
+          userModule.findAll({
+            attribute: ['first_name'],
+            order: [['user_id', 'DESC']],
+            where: {
+              user_id: {
+                $in: userReference
+              }
+            }
+          }).then(function (userResult) {
+            done(null, JSON.stringify(userResult), allDomainData)
+          })
+        } catch (e) {
+          window.alert(e) // error in the above string (in this case, yes)!
+        }
+      })
+    },
+    function (userResult, allDomainData, done) {
+      var userPreference = ''
+      userResult = JSON.parse(userResult)
+      userResult.forEach(function (userResultData) {
+        userPreference += userResultData.first_name + ','
+      })
+
       res.render('codebase/view', {
         data: allDomainData,
-        dateTime: dateTime
+        dateTime: dateTime,
+        userData: userResult,
+        userPreference: userPreference
       })
-    })
+    }
+
+  ], function (err) {
+    if (err) {
+      // Intentionally left blank since in error and success cases,
+      // page has to redirect to forgot password page.
+    }
+
+    res.redirect('/auth/forgot')
   })
 }

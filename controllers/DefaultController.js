@@ -339,4 +339,11 @@ module.exports.controller = function (app) {
       })
     })
   })
+
+  // HTTP GET route to test uncaught exception
+  app.get('/error', function (req, res, next) {
+    process.nextTick(function () {
+      throw new Error('testing Uncaught exception')
+    })
+  })
 } // End of Default Controller

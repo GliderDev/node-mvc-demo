@@ -129,7 +129,6 @@ module.exports.controller = function (app) {
         req.params.permission,
         function (err, isAllowed) {
           if (err) {
-            req.app.locals.logger.error(JSON.stringify(err))
             next(new Error(err))
           }
           res.json(isAllowed)

@@ -19,6 +19,8 @@ var fs = require('fs')
 var cookieParser = require('cookie-parser')
 // Session Helper
 var session = require('express-session')
+// mysql session storage
+var MySQLStore = require('express-mysql-session')(session)
 // HTTP POST data parser
 var bodyParser = require('body-parser')
 // CSRF helper
@@ -43,6 +45,10 @@ var helmet = require('helmet')
 var flash = require('connect-flash')
 // Gets application configurations
 var config = require('./lib/config')
+// Email Helper
+var emailHelper = require('./lib/email')
+// Timeout middleware
+var timeout = require('connect-timeout')
 
 // ======================== Basic Configurations =============================
 // Creating express object
@@ -65,9 +71,11 @@ app.use(expressFileUpload())
 app.use(helmet())
 
 // Setting Loggers
-var logger = require('./lib/logger')
-app.locals.logger = logger
-app.use(require('morgan')('combined', { 'stream': logger.stream }))
+var loggerObj = require('./lib/logger')
+var crashLogger = loggerObj.crashLogger
+var logger = loggerObj.winstonLoggers
+app.locals.logger = loggerObj.winstonLoggers
+app.use(require('morgan')('combined', { 'stream': loggerObj.stream }))
 
 // Sets View Engine
 app.set('view engine', 'ejs')
@@ -81,7 +89,17 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(connection(mysql, config.db))
 
 // Adding session management middleware to the application
-app.use(session(config.session))
+var sessionStore = new MySQLStore(config.db) // Mysql Session storage instance
+// Note: - Database based session storage used bcoz
+// its recommended for production.
+// See the warning message in the following link
+// https://www.npmjs.com/package/express-session#sessionoptions
+app.use(session({
+  secret: config.session.secret,
+  store: sessionStore,
+  resave: config.session.resave,
+  saveUninitialized: config.session.saveUninitialized
+}))
 
 // Adding cookie management middleware to the application
 app.use(cookieParser('pass'))
@@ -225,9 +243,77 @@ app.use(function (req, res, next) {
   res.render('404')
 })
 
+// Event function to execute when an uncaught exception occurs
+process.on('uncaughtException', function (err) {
+  // logs uncaught exception
+  crashLogger.error(err)
+
+  // Emails uncaught exception
+  // if (app.get('env') === 'production') {
+  //   // Email exception
+  //   let emailData = {
+  //     from: config.email,
+  //     to: config.email,
+  //     subject: 'unhandled exception occurred',
+  //     data: '<pre>' + err
+  //   }
+  //   emailHelper.sendEmail(emailData, false, function (err, status) {
+  //     if (err) crashLogger.error(err)
+  //     if (status) {
+  //       logger.error(
+  //         'unhandled exception notification email Send successfully'
+  //       )
+  //     }
+  //   })
+  // }
+})
+
+// Event function to execute when a error is not handled in promise
+process.on('unhandledRejection', function (reason, promise) {
+  crashLogger.error('Unhandled rejection - Reason' + reason)
+  crashLogger.error('Unhandled rejection on Promise' + promise)
+
+  // Emails unhandled rejection
+  // if (app.get('env') === 'production') {
+  //   // Email exception
+  //   let emailData = {
+  //     from: config.email,
+  //     to: config.email,
+  //     subject: 'unhandled Rejection occurred',
+  //     data: '<pre>' +
+  //     'Unhandled rejection - Reason' + reason +
+  //     'Unhandled rejection on Promise' + promise
+  //   }
+  //   emailHelper.sendEmail(emailData, false, function (err, status) {
+  //     if (err) crashLogger.error(err)
+  //     if (status) {
+  //       logger.error(
+  //         'unhandled Rejection notification email Send successfully'
+  //       )
+  //     }
+  //   })
+  // }
+})
+
 // 500 error handler (middleware)
 app.use(function (err, req, res, next) {
   logger.error(err.stack)
+  console.log('as ok')
+  let emailData = {
+    from: config.email,
+    to: config.email,
+    subject: 'unhandled exception occurred',
+    data: '<pre>' + err.stack
+  }
+  emailHelper.sendEmail(emailData, false, function (err, status) {
+    if (err) crashLogger.error(err)
+    console.log('err mail ok')
+    if (status) {
+      logger.error(
+        'unhandled exception notification email Send successfully'
+      )
+    }
+  })
   let errorData = {}
   if (app.get('env') === 'development') {
     errorData.message = err.message

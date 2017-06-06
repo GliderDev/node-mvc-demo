@@ -7,7 +7,6 @@ exports.createCategory = function (req, res, next) {
   domain.findAll({
     attributes: [[sequelize.fn('COUNT', sequelize.col('domain_id')), 'domainCount']]
   }).then(function (allDomainData) {
-    // console.log('domainCount =' + JSON.stringify(allDomainData))
   })
 
   let page = (req.params.page) ? req.params.page : 1
@@ -20,10 +19,8 @@ exports.createCategory = function (req, res, next) {
     limit: limit,
     order: [['domain_id', 'DESC']]
   }).then(function (result) {
-    // console.log('domainCount =' + JSON.stringify(result))
     if (result) {
       let html = generateOptions(result.rows)
-      console.log('html' + html)
       res.render('categories/create', {
 
         html: html,
@@ -141,7 +138,6 @@ exports.saveSubCategory = function (req, res, next) {
 exports.changeToApprove = function (req, res, next) {
   var domainId = req.params.domain_id
   let domain = req.app.locals.Domain
-  console.log('allDomin =' + domainId)
 
   domain.update({
     status: 1
@@ -150,7 +146,6 @@ exports.changeToApprove = function (req, res, next) {
       domain_id: domainId
     }
   }).then(function (updateResult) {
-    console.log(updateResult)
   })
 
   res.redirect('/categories/create')
@@ -159,7 +154,6 @@ exports.changeToApprove = function (req, res, next) {
 exports.changeToReject = function (req, res, next) {
   var domainId = req.params.domain_id
   let domain = req.app.locals.Domain
-  console.log('allDomin =' + domainId)
 
   domain.update({
     status: 0
@@ -168,7 +162,6 @@ exports.changeToReject = function (req, res, next) {
       domain_id: domainId
     }
   }).then(function (updateResult) {
-    console.log(updateResult)
   })
 
   res.redirect('/categories/create')
@@ -182,7 +175,6 @@ exports.changeToReject = function (req, res, next) {
 
 
 function generateOptions (optionData) {
-  // console.log('optData' + JSON.stringify(optionData))
   let html = ''
   if (optionData.length) {
     optionData.forEach(function (element) {
