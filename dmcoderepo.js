@@ -47,8 +47,6 @@ var flash = require('connect-flash')
 var config = require('./lib/config')
 // Email Helper
 var emailHelper = require('./lib/email')
-// Timeout middleware
-var timeout = require('connect-timeout')
 
 // ======================== Basic Configurations =============================
 // Creating express object

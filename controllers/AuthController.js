@@ -6,7 +6,7 @@
 
 var auth = require('../models/Auth')
 var authHelper = require('../lib/authHelper')
-var dashboard = require('../models/Dashboard')
+var validationHelper = require('../lib/validationHelper')
 
 // Module definition
 module.exports.controller = function (app) {
@@ -36,6 +36,14 @@ module.exports.controller = function (app) {
     }
   )
 
+  // HTTP GET route to get sign in page validation rules
+  app.get('/auth/get-login-rules', function (req, res, next) {
+    res.json({
+      error: false,
+      data: validationHelper.getSignInRules()
+    })
+  })
+
   // HTTP GET - logout page route
   app.get('/auth/logout', function (req, res, next) {
     req.logout()
@@ -51,6 +59,14 @@ module.exports.controller = function (app) {
 
   // HTTP POST - Register form processing page route
   app.post('/auth/register', csrfMiddleware, parseForm, auth.registerUser)
+
+  // HTTP GET route to get user registration page validation rules
+  app.get('/auth/get-register-rules', function (req, res, next) {
+    res.json({
+      error: false,
+      data: validationHelper.getUserRegisterRules()
+    })
+  })
 
   // HTTP GET - Forgot password page route
   app.get('/auth/forgot', csrfMiddleware, function (req, res, next) {
