@@ -24,6 +24,7 @@ module.exports.controller = function (app) {
 
   // HTTP POST - login form process page route
   app.post('/auth/login',
+    validationHelper.validateForm,
     passport.authenticate(
       'login', {
         failureRedirect: '/auth/login'
@@ -58,7 +59,12 @@ module.exports.controller = function (app) {
   })
 
   // HTTP POST - Register form processing page route
-  app.post('/auth/register', csrfMiddleware, parseForm, auth.registerUser)
+  app.post('/auth/register',
+    validationHelper.validateForm,
+    csrfMiddleware,
+    parseForm,
+    auth.registerUser
+  )
 
   // HTTP GET route to get user registration page validation rules
   app.get('/auth/get-register-rules', function (req, res, next) {
@@ -77,12 +83,22 @@ module.exports.controller = function (app) {
 
   // HTTP POST - forgot password form process page route
   app.post('/auth/forgot',
+    validationHelper.validateForm,
     parseForm, csrfMiddleware,
     auth.forgotPassword
   )
 
+  // HTTP GET route to get forgot password page validation rules
+  app.get('/auth/get-forgot-rules', function (req, res, next) {
+    res.json({
+      error: false,
+      data: validationHelper.getUserForgotPasswordRules()
+    })
+  })
+
   // HTTP GET - Reset password page route
-  app.get('/auth/reset/:token', csrfMiddleware,
+  app.get('/auth/reset/:token',
+    csrfMiddleware,
     auth.validatePasswordResetToken, function (req, res, next) {
       res.render('auth/reset', {
         csrf: req.csrfToken(),
@@ -93,9 +109,18 @@ module.exports.controller = function (app) {
 
   // HTTP POST - reset password form process page route
   app.post('/auth/reset',
+    validationHelper.validateForm,
     parseForm, csrfMiddleware,
     auth.resetPassword
   )
+
+  // HTTP GET route to get reset password page validation rules
+  app.get('/auth/get-reset-rules', function (req, res, next) {
+    res.json({
+      error: false,
+      data: validationHelper.getUserResetPasswordRules()
+    })
+  })
 
   /**
    * HTTP GET - To show user role

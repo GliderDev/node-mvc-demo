@@ -296,22 +296,21 @@ process.on('unhandledRejection', function (reason, promise) {
 // 500 error handler (middleware)
 app.use(function (err, req, res, next) {
   logger.error(err.stack)
-  console.log('as ok')
-  let emailData = {
-    from: config.email,
-    to: config.email,
-    subject: 'unhandled exception occurred',
-    data: '<pre>' + err.stack
-  }
-  emailHelper.sendEmail(emailData, false, function (err, status) {
-    if (err) crashLogger.error(err)
-    console.log('err mail ok')
-    if (status) {
-      logger.error(
-        'unhandled exception notification email Send successfully'
-      )
-    }
-  })
+  // let emailData = {
+  //   from: config.email,
+  //   to: config.email,
+  //   subject: 'unhandled exception occurred',
+  //   data: '<pre>' + err.stack
+  // }
+  // emailHelper.sendEmail(emailData, false, function (err, status) {
+  //   if (err) crashLogger.error(err)
+  //   console.log('err mail ok')
+  //   if (status) {
+  //     logger.error(
+  //       'Exception notification email Send successfully'
+  //     )
+  //   }
+  // })
   let errorData = {}
   if (app.get('env') === 'development') {
     errorData.message = err.message
