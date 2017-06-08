@@ -4,7 +4,7 @@
   "description": "dmcoderepo",
   "main": "app.js",
   "scripts": {
-    "test": "mocha --reporter spec",
+    "test": "mocha",
     "start": "nodemon -e css,ejs,js,json --watch controllers --watch views --watch models --watch lib"
   },
   "author": "",
@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "chai": "^4.0.2",
+    "chai-http": "^3.0.0",
     "mocha": "^3.4.2",
     "nodemon": "^1.11.0",
     "standard": "^10.0.2"
