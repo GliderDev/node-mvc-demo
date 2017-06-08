@@ -3,11 +3,11 @@
 
 exports.createCategory = function (req, res, next) {
   let domain = req.app.locals.Domain
-  let sequelize = req.app.locals.sequelize
-  domain.findAll({
-    attributes: [[sequelize.fn('COUNT', sequelize.col('domain_id')), 'domainCount']]
-  }).then(function (allDomainData) {
-  })
+  // let sequelize = req.app.locals.sequelize
+  // domain.findAll({
+  //   attributes: [[sequelize.fn('COUNT', sequelize.col('domain_id')), 'domainCount']]
+  // }).then(function (allDomainData) {
+  // })
 
   let page = (req.params.page) ? req.params.page : 1
   let limit = 3

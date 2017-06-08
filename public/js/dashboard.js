@@ -6,7 +6,6 @@ function cancelEdit () {
 }
 // declaring socket object
 var socket
-
 $(document).ready(function () {
   // Calling function to show/hide html content based on user role
   showRoleBasedData()
@@ -14,7 +13,8 @@ $(document).ready(function () {
   // Calling function to show dashboard counts
   getDashboardCounts()
 
-  getDashboardCodeBase()
+  // Calling the function to get codebase  to show in Dashboard
+  getDashboardCodeBase(1)
 
   $('#submitBtn').click(function (event) {
     event.preventDefault()
@@ -98,6 +98,46 @@ $(document).ready(function () {
     })
   })
 
+  $('#code_category_list').on('change', function () {
+    var value = this.value
+    if (value === '-1') {
+      $('#sub-category-list').prop('disabled', true)
+    } else {
+      $('#sub-category-list').prop('disabled', false)
+    }
+
+    if (value === 'createNew') {
+      $('#create-category').modal()
+      $('#modalSave').click(function (event) {
+        event.preventDefault()
+        var title = $('#category_name').val()
+        var description = $('#category_desc').val()
+        if (title !== '' && description !== '') {
+          $.ajax({
+            type: 'POST',
+            url: '/categories/create',
+            data: {title: title, description: description},
+            cache: false,
+            success: function (optionData) {
+              if (!optionData.error && optionData.data.html.length) {
+                var id = optionData.data.id
+                $('#code_category_list').html(optionData.data.html)
+                $('.cat_' + id).attr('selected', true)
+                window.alert('success')
+              } else {
+                $('.cat_default').attr('selected', true)
+              }
+            },
+            error: function (error) {
+              console.log('error')
+              window.alert('error' + error)
+            }
+          })
+        }
+      })
+    }
+  })
+
   $('#cat_new').click(function (clickEvent) {
     clickEvent.preventDefault()
     $('#create-category').modal()
@@ -156,16 +196,6 @@ $(document).ready(function () {
         }
       })
     }
-  })
-
-  $('#submitBtn').click(function (event) {
-    event.preventDefault()
-
-    // var catValue = $('#category-list').val()
-    // var title = $('#title').val()
-    // var description = $('#desc').val()
-
-    if (!error) $('#codeBaseForm').submit()
   })
 
   $('#chat-send').click(function (event) {
@@ -239,7 +269,7 @@ function getDashboardCounts () {
 
   // listener, whenever the server emits 'updatechat', this updates the chat body
   socket.on('updatechat', function (username, data) {
-    $('#chat-messages').append('<b>' + username + ':</b> ' + data + '<br>')
+    $('#chat-messages').append('<span><b>' + username + ':</b> ' + data + '<br></span>')
   })
 }
 
@@ -421,13 +451,26 @@ function isJson (item) {
   return false
 }
 
-function getDashboardCodeBase () {
+/**
+ * To get the CodeBase  data from table and show it in the dashboard
+ */
+function getDashboardCodeBase (page) {
+  if (typeof (page) === 'undefined' && page === null) {
+    page = 1
+  }
+
   $.ajax({
     type: 'GET',
-    url: '/codebase/getCodebase',
+    url: '/codebase/getCodebase/' + page,
     cache: false,
     success: function (successData) {
-      $('#topics').html(successData)
+      $('#topics').html(successData['html'])
+      $('#codebasePagination').html(successData['pageNo'])
+      $('.codebase-pagination').click(function (event) {
+        event.preventDefault()
+        let page = $(this).attr('data-page')
+        getDashboardCodeBase(page)
+      })
     },
     error: function (error) {
       console.log('error')

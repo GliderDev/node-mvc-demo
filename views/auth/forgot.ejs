@@ -27,12 +27,19 @@
                 <input type="hidden" name="_csrf" value="<%= csrf %>"><br/>
                 <input type="text" id="email" name="email" class="form-control" placeholder="email"/>
                 <div class="email-error-msg alert-danger hide"></div>
+                <%
+                    if (typeof (errors) !== 'undefined' &&
+                        typeof (errors.email) !== 'undefined'
+                    ) {
+                %>
+                    <div class="alert-danger"><%= errors.email %></div>
+                <% } %>
             </div>
         </div>
-        <div class="footer">                                                               
+        <div class="footer">
             <button type="submit" id="forgot" class="btn bg-olive btn-block">Submit</button>
 
-            <a href="/auth/login" class="text-center">Sign In</a>  
+            <a href="/auth/login" class="text-center">Sign In</a>
         </div>
     </form>
 </div>

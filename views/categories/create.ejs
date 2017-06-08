@@ -9,7 +9,7 @@
                     <h1>
                         Create Categories
                         <small>Control panel</small>
-                    </h1> 
+                    </h1>
                     <ol class="breadcrumb">
                         <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                         <li class="active">Create Categories</li>
@@ -20,15 +20,15 @@
 
         <div class="row">
           <!-- left column -->
-					
+
 					<div class="col-md-12">
 
           <div class="col-md-6 mtop10" >
             <!-- general form elements -->
                <input type= "button" class="cat_new btn btn-primary" id="cat_new" value="Create New">
-                    
-            
-          </div> 
+
+
+          </div>
 					</div>
 
 					<!-- new class-->
@@ -42,19 +42,19 @@
 
                   <div class="box-body">
                     <table class="table table-bordered">
-                      
+
                       <thead>
                         <tr>
                             <th>Category</th>
                             <th>Status</th>
-                            <th>Action</th>                                                
+                            <th>Action</th>
                         </tr>
                       </thead>
 
-                      <tbody>                       
+                      <tbody>
                         <%
                         for( var i=0; i< Object.keys(allDomain).length; i++){
-                        
+
                            %>
 
                         <tr>
@@ -63,28 +63,28 @@
                                    ? 'Pending'  : 'Active'  %></td>
                             <td>
                               <% if (allDomain[i].status === 0) {%>
-                               
-                                <a class="btn btn-primary" 
+
+                                <a class="btn btn-primary"
                                    href="../categories/approve/<%=allDomain[i].domain_id%>">
                                     Approve
                                 </a>
                               <% } else { %>
-                                
-                                <a class="btn btn-danger" 
+
+                                <a class="btn btn-danger"
                                    href="../categories/reject/<%=allDomain[i].domain_id%>">
                                    Reject
                                 </a>
-                                
+
                                 <% } %>
                             </td>
                         </tr>
-                        
+
                         <% } %>
                       </tbody>
 
                     </table>
                   </div><!-- /.box-body -->
-                  
+
 									<div class="box-footer clearfix">
                   	<ul class="pagination pagination-sm no-margin pull-right">
                     	<% if(totalCount !== 0) {
@@ -93,30 +93,30 @@
                             var page = Math.ceil(totalCount / limitCount)
                             for(var i = 1; i <= page; i++ ){ %>
                               	<li class ="cat-list <% if (currentPage == i){ %>active<% } %>" id="catPage_<%= i%>">
-                                  <a class="cat-pagination" href="/categories/create/<%= i %>" ><%=i%></a>
+                                  <a class="cat-pagination" href="categories/create/<%= i %>" ><%=i%></a>
                                 </li>
 
-                      <%     }  
-                         }   
+                      <%     }
+                         }
                       %>
                     </ul>
                   </div>
               </div><!-- /.box -->
 
           </div> <!-- end of new class -->
-					
-						<!-- new class-->
-					
-    	</div>
-     
-    </section>     
 
-</aside>   
+						<!-- new class-->
+
+    	</div>
+
+    </section>
+
+</aside>
 
 
 <div class="modal fade" id="create-category" role="dialog">
     <div class="modal-dialog">
-    
+
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
@@ -130,12 +130,12 @@
                                 <div class="form-group">
                                     <label>Category Name</label>
                                     <input type="text" class="form-control" id="category_name"
-                                          name="category_name" placeholder="Enter Title">         
+                                          name="category_name" placeholder="Enter Title">
                                 </div>
 
                                 <div class="form-group">
                                     <label>Category Description</label>
-                                    <textarea class="form-control" rows="3" id="category_desc" 
+                                    <textarea class="form-control" rows="3" id="category_desc"
                                               placeholder="Enter ..."></textarea>
                                 </div>
               </div>
@@ -146,13 +146,13 @@
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
-      
+
     </div>
 </div>
 
 <div class="modal fade" id="create-sub-category" role="dialog">
     <div class="modal-dialog">
-    
+
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
@@ -166,12 +166,12 @@
                                 <div class="form-group">
                                     <label>Sub Category Name</label>
                                     <input type="text" class="form-control" id="sub_category_name"
-                                          name="sub_category_name" placeholder="Enter Title">         
+                                          name="sub_category_name" placeholder="Enter Title">
                                 </div>
 
                                 <div class="form-group">
                                     <label>Sub Category Description</label>
-                                    <textarea class="form-control" rows="3" id="sub_category_desc" 
+                                    <textarea class="form-control" rows="3" id="sub_category_desc"
                                               placeholder="Enter ..."></textarea>
                                 </div>
               </div>
@@ -182,7 +182,7 @@
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
-      
+
     </div>
 </div>
 

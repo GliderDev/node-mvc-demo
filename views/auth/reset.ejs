@@ -24,15 +24,29 @@
             </div>
         <% } %>
         <div class="form-group <% if(flashMessage === ' hide') { %>hide<% } %>">
-          <div class="new-password-error-msg alert-danger hide"></div>
-          <input type="hidden" name="_csrf" value="<%= csrf %>"><br/>
-          <input type="hidden" name="resetToken" value="<%= token %>"><br/>
-          <input type="password" id="new-password" name="password" class="form-control" placeholder="New password"/>
-          <div class="password-error-msg alert-danger hide"></div>
+            <div class="new-password-error-msg alert-danger hide"></div>
+            <input type="hidden" name="_csrf" value="<%= csrf %>"><br/>
+            <input type="hidden" name="resetToken" value="<%= token %>"><br/>
+            <input type="password" id="new-password" name="password" class="form-control" placeholder="New password"/>
+            <div class="password-error-msg alert-danger hide"></div>
+            <%
+                if (typeof (errors) !== 'undefined' &&
+                    typeof (errors.password) !== 'undefined'
+                ) {
+            %>
+                <div class="alert-danger"><%= errors.password %></div>
+            <% } %>
         </div>
         <div class="form-group <% if(flashMessage === ' hide') { %>hide<% } %>">
-          <input type="password" id="confirm-password" name="confirmPassword" class="form-control" placeholder="Confirm Password"/>
-          <div class="confirm-password-error-msg alert-danger hide"></div>
+            <input type="password" id="confirm-password" name="confirmPassword" class="form-control" placeholder="Confirm Password"/>
+            <div class="confirm-password-error-msg alert-danger hide"></div>
+            <%
+                if (typeof (errors) !== 'undefined' &&
+                    typeof (errors.confirmPassword) !== 'undefined'
+                ) {
+            %>
+                <div class="alert-danger"><%= errors.confirmPassword %></div>
+            <% } %>
         </div>
       </div>
       <div class="footer">

@@ -42,6 +42,7 @@ exports.addCodeBase = function (req, res, next) {
 }
 
 exports.saveCodeBase = function (req, res, next) {
+  console.log('test')
   let codebase = req.app.locals.Codebase
   let path = require('path')
   var fileUpload = req.files.uploads
@@ -60,7 +61,7 @@ exports.saveCodeBase = function (req, res, next) {
   let data = {
     name: req.body.title,
     description: req.body.description,
-    domain_id: req.body.category_list,
+    domain_id: req.body.code_category_list,
     author_id: req.user.user_id,
     uploaded_on: nowDate,
     updated_on: nowDate,
@@ -72,28 +73,51 @@ exports.saveCodeBase = function (req, res, next) {
     reference: JSON.stringify(req.body.refUser),
     projects: req.body.projRef
   }
-
+console.log(data)
   codebase.create(data).then(function (codeBaseData) {
     res.redirect('/')
   })
 }
 
 exports.getCodeBase = function (req, res, next) {
+  let codebase = req.app.locals.Codebase
   let sequelize = req.app.locals.sequelize
   let html = ''
+  codebase.findAndCountAll({
 
-  sequelize.query('SELECT * FROM codebase as a JOIN  domain as b on a.domain_id = b.domain_id',
-   { type: sequelize.QueryTypes.SELECT})
-  .then(alldomain => {
-    alldomain.forEach(function (codebaseResult) {
-      html += '<li>' +
-      '<a href="/codebase/view/' + codebaseResult.codebase_id + '" class="text">' +
-      codebaseResult.name + '</span>' +
-      '<small class="label label-success"><i class="fa fa-book"></i> ' +
-      codebaseResult.domain + '</small>' +
+  }).then(function (allCount) {
+    let page = (req.params.page) ? req.params.page : 1
+    let limit = 3
+    let offset = (page - 1) * limit
+    let totalCount = allCount.count
+    let PageCount = Math.ceil(totalCount / limit)
+
+    let pageNo = ''
+
+    for (let i = 1; i <= PageCount; i++) {
+      pageNo += '<ul class="pagination pagination-sm no-margin pull-right"> ' +
+      '<li class ="codebase-lists">' +
+      '<a class="codebase-pagination" data-page= ' + i + ' href="codebase/getCodebase/' + i + '" > ' +
+       i + ' </a>' +
       '</li>'
-    })
-    res.send(html)
+    }
+    let query = 'SELECT * FROM codebase AS cb JOIN  domain  AS d ' +
+  ' ON cb.domain_id = d.domain_id ' +
+  ' ORDER BY codebase_id desc LIMIT :limit OFFSET :offset '
+
+    sequelize.query(query,
+    { replacements: { limit: limit, offset: offset }, type: sequelize.QueryTypes.SELECT})
+      .then(alldomain => {
+        alldomain.forEach(function (codebaseResult) {
+          html += '<li>' +
+          '<a href="/codebase/view/' + codebaseResult.codebase_id + '" class="text">' +
+           codebaseResult.name + '</span>' +
+          '<small class="label label-success"><i class="fa fa-book"></i> ' +
+          codebaseResult.domain + '</small>' +
+          '</li>'
+        })
+        res.json({html: html, pageNo: pageNo})
+      })
   })
 }
 

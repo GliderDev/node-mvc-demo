@@ -4,7 +4,7 @@
   "description": "dmcoderepo",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --reporter spec",
     "start": "nodemon -e css,ejs,js,json --watch controllers --watch views --watch models --watch lib"
   },
   "author": "",
@@ -42,6 +42,8 @@
     "winston": "^2.3.1"
   },
   "devDependencies": {
+    "chai": "^4.0.2",
+    "mocha": "^3.4.2",
     "nodemon": "^1.11.0",
     "standard": "^10.0.2"
   },

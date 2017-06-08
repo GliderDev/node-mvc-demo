@@ -226,6 +226,12 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.locals.passport = passport
 
+// =========================== Testing module config ==================
+app.use(function (req, res, next) {
+  res.locals.showTests = app.get('env') !== 'production'
+  next()
+})
+
 // =========================== Including Routes ========================
 // dynamically include routes (Controller)
 fs.readdirSync('./controllers').forEach(function (file) {
