@@ -8,7 +8,7 @@
                     <h1>
                         View Users
                         <small>Control panel</small>
-                    </h1> 
+                    </h1>
                     <ol class="breadcrumb">
                         <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                         <li class="active">View Users</li>
@@ -21,7 +21,7 @@
         </div><!-- /.box-header -->
 
         <div class="box-body table-responsive">
-            <table id="example2" class="table table-bordered table-striped">
+            <table id="example" class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>First Name</th>
@@ -30,23 +30,24 @@
                         <th>Date of Birth</th>
                         <th>Employee Code</th>
                         <th>Phone Number</th>
-                        <th>Uploads</th>                                                
+                        <th>Uploads</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
-                                            
+
                 <tbody>
 
-                    <%                     
-                         if(data.length){ 
-                                    
-                                for(var i = 0;i < data.length;i++) { 
+                    <%
+                         if(data.length){
+
+                                for(var i = 0;i < data.length;i++) {
 
                                     var dobFormat =  dateTime.create(data[i].dob);
                                     var dob =  dobFormat.format('Y-m-d');
 
                     %>
                     <tr>
-                                                    
+
                         <td><%=data[i].first_name %></td>
                         <td><%=data[i].last_name %></td>
                         <td><%=data[i].email %></td>
@@ -54,35 +55,31 @@
                         <td><%=data[i].emp_code %></td>
                         <td><%=data[i].phone %></td>
                         <td><%=data[i].profile_pic %></td>
-                                                    
+
                         <td>
                             <a class="btn btn-primary edit-user" data-userid="<%=data[i].user_id%>" href="../users/edit/<%=data[i].user_id%>">Edit</a>
                             <% if(data[i].user_id === 1) { %>
-                                <a class="btn btn-danger disabled" id="delete-user" 
+                                <a class="btn btn-danger disabled" id="delete-user"
                                     href="../users/delete/<%=data[i].user_id%>" data-userid="<%=data[i].user_id%>" >Delete</a>
-                            <% } else { %>    
-                                <a class="btn btn-danger delete-user" 
+                            <% } else { %>
+                                <a class="btn btn-danger delete-user"
                                    href="../users/delete/<%=data[i].user_id%>" data-userid="<%=data[i].user_id%>">Delete</a>
-                            <% } %>    
+                            <% } %>
                         </td>
 
                     </tr>
 
-                </tbody>
-                                            
-                    <% }
-                
-                    }else{ %>
-                    
-                    <tr>
-                        <td colspan="3">No user</td>
-                    </tr>
 
-                    <% } %>
+
+                    <% }
+
+                    }%>
+            </tbody>
+
             </table>
         </div><!-- /.box-body -->
     </div><!-- /.box -->
 </aside>
-        
+
 
 <%- include('./../layouts/dashboard/footer') %>

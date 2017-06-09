@@ -1,0 +1,18 @@
+{
+  // Applications part
+  "apps" : [{
+    "name"      : "API",
+    "script"    : "app.js",
+    "env": {
+      "COMMON_ENV_VAR": "true"
+    },
+    // Environment variables injected when starting with --env production
+    // http://pm2.keymetrics.io/docs/usage/application-declaration/#switching-to-different-environments
+    "env_development" : {
+      "NODE_ENV": "development"
+    },
+    "env_production" : {
+      "NODE_ENV": "production"
+    }
+  }]
+}
