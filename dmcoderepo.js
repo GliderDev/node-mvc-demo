@@ -243,8 +243,17 @@ fs.readdirSync('./controllers').forEach(function (file) {
 
 // 404 catch-all handler (middleware)
 app.use(function (req, res, next) {
+  let path = req.url
   res.status(404)
-  res.render('404')
+
+  // Match /api routes
+  if (path.match(/\/api\/?/)) {
+    res.json({
+      message: 'page not found'
+    })
+  } else {
+    res.render('404')
+  }
 })
 
 // Event function to execute when an uncaught exception occurs
@@ -274,8 +283,8 @@ process.on('uncaughtException', function (err) {
 
 // Event function to execute when a error is not handled in promise
 process.on('unhandledRejection', function (reason, promise) {
-  crashLogger.error('Unhandled rejection - Reason' + reason)
-  crashLogger.error('Unhandled rejection on Promise' + promise)
+  crashLogger.error('Unhandled rejection - Reason: ' + reason)
+  crashLogger.error('Unhandled rejection on Promise: ' + JSON.stringify(promise))
 
   // Emails unhandled rejection
   // if (app.get('env') === 'production') {
@@ -323,7 +332,17 @@ app.use(function (err, req, res, next) {
     errorData.stack = err.stack
   }
 
-  res.render('500', {errorData: errorData})
+  let path = req.url
+  res.status(500)
+
+  // Match /api routes
+  if (path.match(/\/api\/?/)) {
+    res.json({
+      message: 'Oops! an error occurred'
+    })
+  } else {
+    res.render('500', {errorData: errorData})
+  }
 })
 
 // Receiving socket IO instance and returns app instance to app.js

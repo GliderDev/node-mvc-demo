@@ -1,9 +1,4 @@
-function cancelAdd () {
-  window.location.href = '/'
-}
-function cancelEdit () {
-  window.location.href = '/users/view'
-}
+
 // declaring socket object
 var socket
 $(document).ready(function () {
@@ -123,7 +118,7 @@ $(document).ready(function () {
                 var id = optionData.data.id
                 $('#code_category_list').html(optionData.data.html)
                 $('.cat_' + id).attr('selected', true)
-                window.alert('success')
+                // window.alert('success')
               } else {
                 $('.cat_default').attr('selected', true)
               }
@@ -300,8 +295,8 @@ function validateEmail (email) {
       "<p>Email can't be empty</p>"
     ).removeClass('hide')
   } else {
-    let atpos = email.indexOf('@')
-    let dotpos = email.lastIndexOf('.')
+    var atpos = email.indexOf('@')
+    var dotpos = email.lastIndexOf('.')
     if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
       error = true
       $('.email-error-msg').html(
@@ -373,7 +368,11 @@ function httpPost (url, data) {
  * @param  {string} data
  * @return {object}
  */
-function httpGet (url, data = '', responseCallback) {
+function httpGet (url, data, responseCallback) {
+  if (typeof (data) === 'undefined') {
+    data = ''
+  }
+
   if (typeof (url) === 'undefined') {
     return responseCallback({
       error: true,
@@ -468,7 +467,7 @@ function getDashboardCodeBase (page) {
       $('#codebasePagination').html(successData['pageNo'])
       $('.codebase-pagination').click(function (event) {
         event.preventDefault()
-        let page = $(this).attr('data-page')
+        var page = $(this).attr('data-page')
         getDashboardCodeBase(page)
       })
     },

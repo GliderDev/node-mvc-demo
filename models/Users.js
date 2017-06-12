@@ -101,7 +101,9 @@ exports.save = function (req, res, next) {
 
     User.create(data).then(function (user) {
        // Add new user with User role
-      req.app.locals.acl.addUserRoles(user.user_id, 'user')
+      req.app.locals.acl.addUserRoles(user.user_id, 'user', function (err) {
+        if (err) next(new Error(err))
+      })
       // Trigger event in front end to update dashboard counts
       dashboard.getCounts(req, res, next)
       res.redirect('/users/view')
@@ -128,7 +130,7 @@ exports.save_edit = function (req, res, next) {
     let data
     if (typeof (img) !== 'undefined' && img !== null) {
          // Uploading image to /public/uploads directory
-      img.mv(path.join(__dirname, '/../public/uploads/', img.name), function (err) {
+      img.mv(path.join(__dirname, '/../public/uploads/profile/', img.name), function (err) {
         if (err) req.app.locals.logger.error(err)
       })
 
@@ -136,7 +138,6 @@ exports.save_edit = function (req, res, next) {
         first_name: input.f_name,
         last_name: input.l_name,
         email: input.email,
-        password: input.password,
         password_reset_token: '',
         dob: dobFormat,
         phone: input.phone,
@@ -151,7 +152,6 @@ exports.save_edit = function (req, res, next) {
         first_name: input.f_name,
         last_name: input.l_name,
         email: input.email,
-        password: input.password,
         password_reset_token: '',
         dob: dobFormat,
         phone: input.phone,
@@ -182,7 +182,9 @@ exports.delete = function (req, res, next) {
       dashboard.getCounts(req, res, next)
 
       // Removes User's role for RBAC tables
-      req.app.locals.acl.removeUserRoles(id, 'user')
+      req.app.locals.acl.removeUserRoles(id, 'user', function (err) {
+        if (err) next(new Error(err))
+      })
 
       res.redirect('/users/view')
     })

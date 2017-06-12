@@ -41,12 +41,6 @@ module.exports.controller = function (app) {
     authHelper.ensureAuth,
     categoriesModel.changeToReject
   )
-
-  // app.get(
-  //   '/categories/list',
-  //   authHelper.ensureAuth,
-  //   categoriesModel.list
-  // )
 }
 
  // End of Categories Controller

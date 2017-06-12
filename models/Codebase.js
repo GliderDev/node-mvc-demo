@@ -8,7 +8,10 @@ exports.addCodeBase = function (req, res, next) {
 
   domain.findAll({
     attribute: ['domain', 'domain_id', 'description', 'status'],
-    order: [['domain_id', 'DESC']]
+    order: [['domain_id', 'DESC']],
+    where: {
+      status: 1
+    }
   }).then(function (result) {
     if (result) {
       var html = ''
@@ -73,7 +76,7 @@ exports.saveCodeBase = function (req, res, next) {
     reference: JSON.stringify(req.body.refUser),
     projects: req.body.projRef
   }
-console.log(data)
+  console.log(data)
   codebase.create(data).then(function (codeBaseData) {
     res.redirect('/')
   })
@@ -161,28 +164,56 @@ exports.viewCodebase = function (req, res, next) {
       alldomain.forEach(function (allDomainData) {
         try {
           let userReference = JSON.parse(allDomainData.reference)
-          userModule.findAll({
-            attribute: ['first_name'],
-            order: [['user_id', 'DESC']],
-            where: {
-              user_id: {
-                $in: userReference
+          req.app.locals.logger.info('reference data ' + userReference)
+
+          if (userReference === null) {
+            var userRef = false
+            userModule.findAll({
+              attribute: ['first_name'],
+              order: [['user_id', 'DESC']]
+            }).then(function (userResult) {
+              done(null, JSON.stringify(userResult), allDomainData, userRef)
+            })
+          } else if (typeof (userReference) === 'object') {
+            userRef = true
+            userModule.findAll({
+              attribute: ['first_name'],
+              order: [['user_id', 'DESC']],
+              where: {
+                user_id: {
+                  $in: userReference
+                }
               }
-            }
-          }).then(function (userResult) {
-            done(null, JSON.stringify(userResult), allDomainData)
-          })
+            }).then(function (userResult) {
+              done(null, JSON.stringify(userResult), allDomainData, userRef)
+            })
+          } else {
+            userRef = true
+            userModule.findAll({
+              attribute: ['first_name'],
+              order: [['user_id', 'DESC']],
+              where: {
+                user_id: userReference
+              }
+            }).then(function (userResult) {
+              done(null, JSON.stringify(userResult), allDomainData, userRef)
+            })
+          }
         } catch (e) {
           window.alert(e) // error in the above string (in this case, yes)!
         }
       })
     },
-    function (userResult, allDomainData, done) {
+    function (userResult, allDomainData, userRef, done) {
       var userPreference = ''
-      userResult = JSON.parse(userResult)
-      userResult.forEach(function (userResultData) {
-        userPreference += userResultData.first_name + ','
-      })
+      if (userRef === false) {
+        userPreference = null
+      } else {
+        userResult = JSON.parse(userResult)
+        userResult.forEach(function (userResultData) {
+          userPreference += userResultData.first_name + ','
+        })
+      }
 
       res.render('codebase/view', {
         data: allDomainData,

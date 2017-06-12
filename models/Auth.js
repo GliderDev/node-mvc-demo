@@ -261,7 +261,7 @@ var registerUser = function (req, res, next) {
     profilePic = imgObj.name
     // Uploading image to /public/uploads directory
     imgObj.mv(
-      path.join(__dirname, '/../public/uploads/', profilePic),
+      path.join(__dirname, '/../public/uploads/profile/', profilePic),
       function (err) {
         if (err) {
           next(new Error('error while uploading file ' + JSON.stringify(err)))
@@ -272,7 +272,7 @@ var registerUser = function (req, res, next) {
 
   bcrypt.hash(password, config.passwordSaltRounds, function (err, hash) {
     if (err) {
-      next(new Error('error while encrypting password ' + JSON.stringify(err)))
+      next(new Error(err))
     }
     // Inserting User data
     User.create({
@@ -288,7 +288,9 @@ var registerUser = function (req, res, next) {
       status: 1
     }).then(function (user) {
       // Add new user with User role
-      req.app.locals.acl.addUserRoles(user.user_id, 'user')
+      req.app.locals.acl.addUserRoles(user.user_id, 'user', function (err) {
+        if (err) next(new Error(err))
+      })
 
       // Trigger event in front end to update dashboard counts
       dashboard.getCounts(req, res, next)

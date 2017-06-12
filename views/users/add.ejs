@@ -9,7 +9,7 @@
                     <h1>
                         Add Users
                         <small>Control panel</small>
-                    </h1> 
+                    </h1>
                     <ol class="breadcrumb">
                         <li><a href="/"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                         <li class="active">Add Users</li>
@@ -22,78 +22,78 @@
           <div class="col-md-6">
             <!-- general form elements -->
             <div class="box box-primary">
-                          
+
 
                 <form id="userForm" role="form" method="post" action="/users/add" enctype="multipart/form-data">
                      <div class="box-body">
-                            
+
                             <div class="form-group">
                                 <label for="f_name">First Name</label>
-                                <input type="text" class="form-control" id="f_name" name="f_name" 
+                                <input type="text" class="form-control" id="f_name" name="f_name"
                                        placeholder="Enter First Name">
                                 <div class="f_name-error-msg alert-danger hide"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="l_name">Last Name</label>
-                                <input type="text" class="form-control" id="l_name" name="l_name" 
+                                <input type="text" class="form-control" id="l_name" name="l_name"
                                        placeholder="Enter Last Name">
                                 <div class="l_name-error-msg alert-danger hide"></div>
                             </div>
-                          
+
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" 
+                                <input type="email" class="form-control" id="email" name="email"
                                        placeholder="Enter Email">
-                                <div class="email-error-msg alert-danger hide"></div>                                       
+                                <div class="email-error-msg alert-danger hide"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name = "password" 
+                                <input type="password" class="form-control" id="password" name = "password"
                                        placeholder="Password">
                                 <div class="password-error-msg alert-danger hide"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="dob">Date of Birth</label>
-                                <input type="text" class="form-control" id="dob" name="dob" 
+                                <input type="text" class="form-control" id="dob" name="dob"
                                        placeholder="Enter Date of Birth">
-                                <div class="dob-error-msg alert-danger hide"></div>       
+                                <div class="dob-error-msg alert-danger hide"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="phone">Phone Number</label>
-                                <input type="text" class="form-control" id="phone" name="phone" 
+                                <input type="text" class="form-control" id="phone" name="phone"
                                        placeholder="Enter Phone Number">
                                 <div class="phone-error-msg alert-danger hide"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="phone">Employee Code</label>
-                                <input type="text" class="form-control" id="empcode" name="empcode" 
+                                <input type="text" class="form-control" id="empcode" name="empcode"
                                        placeholder="Enter Employee Code">
-                                <div class="empcode-error-msg alert-danger hide"></div>                                       
+                                <div class="empcode-error-msg alert-danger hide"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="uploads">File input</label>
                                 <input type="file" id="uploads" name="uploads">
-                                <div class="uploads-error-msg alert-danger hide"></div> 
+                                <div class="uploads-error-msg alert-danger hide"></div>
                             </div>
 
                     </div><!-- /.box-body -->
 
                     <div class="box-footer">
                             <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
-                            <input type="button" class="btn btn-warning" value="Cancel" onclick="cancelAdd()"></input>
+                            <a href= "/users/view" class="btn btn-warning" >Cancel</a>
                     </div>
-                </form>  
+                </form>
             </div>
-          </div> 
+          </div>
         </div>
-     
-     </section>     
 
-</aside>    
+     </section>
+
+</aside>
 <%- include('./../layouts/dashboard/footer') %>

@@ -1,23 +1,28 @@
- 
+
                 <!-- sidebar: style can be found in sidebar.less -->
    <aside class="left-side sidebar-offcanvas" style="min-height: 1100px">
 			<section class="sidebar">
 					<!-- Sidebar user panel -->
 					<div class="user-panel">
-												
-							<div class="pull-left image">
+							<% if(profileImage === '' || profileImage === 'undefined') {%>
+                            <div class="pull-left image">
+									<img src="/img/avatar.png" class="img-circle" />
+							</div>
+							<% } else {%>
+                            <div class="pull-left image">
 									<img src="/uploads/profile/<%= profileImage %>" class="img-circle" />
 							</div>
+                            <% } %>
 
 							<div class="pull-left info">
 									<p>
 											<h3 id="user-first-name"><%= userFirstName %></h3>
-									</p> 
+									</p>
 									<a href="#"><i class="fa fa-circle text-success"></i> Online</a>
 							</div>
 
 					</div>
-                
+
 					<!-- sidebar menu: : style can be found in sidebar.less -->
           <ul class="sidebar-menu">
             <li class="active" id="side-dashboard-tree">
@@ -25,26 +30,26 @@
                   <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                 </a>
             </li>
-                        
+
             <li class="treeview admin-role" id="side-user-tree">
                 <a href="#">
 									<i class="fa fa-user"></i>
 									<span>User Management</span>
 									<i class="fa fa-angle-left pull-right"></i>
                 </a>
-            
+
 						    <ul class="treeview-menu">
                     <li><a href="/users/add"><i class="fa fa-angle-double-right"></i> Add Users</a></li>
                     <li><a href="/users/view"><i class="fa fa-angle-double-right"></i> View Users</a></li>
                 </ul>
              </li>
-                        
+
              <li class="treeview admin-role" id="side-domain-tree">
-                 <a href="#"> 
+                 <a href="#">
                     <i class="fa fa-laptop"></i> <span>Domain</span>
                     <i class="fa fa-angle-left pull-right"></i>
                  </a>
-                            
+
 				    <ul class="treeview-menu">
                       <li><a href="/categories/create"><i class="fa fa-angle-double-right"></i> Create Category</a></li>
                       <!--<li><a href="/categories/list"><i class="fa fa-angle-double-right"></i> Manage Category</a></li>-->
@@ -53,11 +58,11 @@
               </li>
 
                <li class="treeview user-role" id="side-domain-tree">
-                 <a href="#"> 
+                 <a href="#">
                     <i class="fa fa-book"></i> <span>CodeBase</span>
                     <i class="fa fa-angle-left pull-right"></i>
                  </a>
-                            
+
 				    <ul class="treeview-menu">
                       <li><a href="/codebase/add"><i class="fa fa-angle-double-right"></i> Create Codebase</a></li>
                   </ul>
@@ -89,4 +94,3 @@
         <% } %>
       </aside>
                 <!-- /.sidebar -->
-  

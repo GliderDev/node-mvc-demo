@@ -44,20 +44,22 @@
 
                         <div class="col-sm-6 invoice-col">
                             <strong> User Reference </strong> <br>
+                            <% if(userPreference !== null) {%>
                             <% var match =  userPreference.split(',') %>
                             <% for(var name in match) {%>
                                 <%= match[name] %> <br>
-                            <% } %>
+                            <% }
+                              } %>
                         </div><!-- /.col -->
                     </div><!-- /.row -->
 
                     <!-- this row will not appear when printing -->
-                    <div class="row no-print">
+                    <!--<div class="row no-print">
                         <div class="col-xs-12">
                             <button class="btn btn-default" ><i class=" fa fa-download"></i> Download as PDF</button>
                             <button class="btn btn-primary pull-right" style="margin-right: 5px;"><i class="fa fa-download"></i> Download Attachment</button>
                         </div>
-                    </div>
+                    </div>-->
                 </section><!-- /.content -->
 
 </aside>

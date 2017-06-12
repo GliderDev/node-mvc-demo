@@ -19,7 +19,7 @@ module.exports.controller = function (app) {
   app.get(
     '/rbac/assign/:id/:role',
     authHelper.ensureAuth,
-    function (req, res) {
+    function (req, res, next) {
       let userId = req.params.id
       let role = req.params.role
       User.find({
@@ -29,7 +29,7 @@ module.exports.controller = function (app) {
       }).then(function (userObj) {
         if (userObj !== null) {
           rbac.assignRole(acl, userId, role, function (err, status) {
-            if (err) res.send(err)
+            if (err) next(new Error(err))
             if (status) {
               res.send(role + ' role set from ' + userObj.first_name)
             } else {
@@ -47,7 +47,7 @@ module.exports.controller = function (app) {
   app.get(
     '/rbac/remove/:id/:role',
     authHelper.ensureAuth,
-    function (req, res) {
+    function (req, res, next) {
       let userId = req.params.id
       let role = req.params.role
       User.find({
@@ -57,7 +57,7 @@ module.exports.controller = function (app) {
       }).then(function (userObj) {
         if (userObj !== null) {
           rbac.removeRole(acl, userId, role, function (err, status) {
-            if (err) res.send(err)
+            if (err) next(new Error(err))
             if (status) {
               res.send(role + ' role removed for ' + userObj.first_name)
             } else {
@@ -75,7 +75,7 @@ module.exports.controller = function (app) {
   app.get(
     '/rbac/role/:id',
     authHelper.ensureAuth,
-    function (req, res) {
+    function (req, res, next) {
       let userId = req.params.id
       User.find({
         where: {
@@ -84,7 +84,7 @@ module.exports.controller = function (app) {
       }).then(function (userObj) {
         if (userObj !== null) {
           rbac.getUserRoles(acl, userId, function (err, role) {
-            if (err) res.send(err)
+            if (err) next(new Error(err))
             if (role) {
               res.send(
                   'Role assigned to ' +
@@ -105,12 +105,12 @@ module.exports.controller = function (app) {
   /**
    * HTTP GET- To show allowed permission of the user
    */
-  app.get('/rbac/show-permission', function (req, res) {
+  app.get('/rbac/show-permission', function (req, res, next) {
     req.app.locals.acl.allowedPermissions(
       req.user.user_id,
       ['user', 'rbac', '/', 'categories'],
       function (err, obj) {
-        if (err) res.json(err)
+        if (err) next(new Error(err))
         res.json(obj)
       }
       )

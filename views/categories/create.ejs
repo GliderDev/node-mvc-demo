@@ -65,13 +65,13 @@
                               <% if (allDomain[i].status === 0) {%>
 
                                 <a class="btn btn-primary"
-                                   href="../categories/approve/<%=allDomain[i].domain_id%>">
+                                   href="/categories/approve/<%=allDomain[i].domain_id%>">
                                     Approve
                                 </a>
                               <% } else { %>
 
                                 <a class="btn btn-danger"
-                                   href="../categories/reject/<%=allDomain[i].domain_id%>">
+                                   href="/categories/reject/<%=allDomain[i].domain_id%>">
                                    Reject
                                 </a>
 
@@ -89,16 +89,16 @@
                   	<ul class="pagination pagination-sm no-margin pull-right">
                     	<% if(totalCount !== 0) {
                             var currentPage = page
-                            console.log(currentPage)
                             var page = Math.ceil(totalCount / limitCount)
                             for(var i = 1; i <= page; i++ ){ %>
                               	<li class ="cat-list <% if (currentPage == i){ %>active<% } %>" id="catPage_<%= i%>">
-                                  <a class="cat-pagination" href="categories/create/<%= i %>" ><%=i%></a>
+                                  <a class="cat-pagination" href="/categories/create/<%= i %>" ><%=i%></a>
                                 </li>
 
                       <%     }
                          }
                       %>
+                    <input type="hidden" name="pageNumber" id="pageNumber" value="<%= currentPage %>"
                     </ul>
                   </div>
               </div><!-- /.box -->

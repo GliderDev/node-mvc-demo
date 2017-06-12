@@ -4,11 +4,7 @@
  * This controller is used group user and its functionalities
  *
  */
-
-var path = require('path')
 var authHelper = require('../lib/authHelper')
-
-
 
 // Creating User model object
 var userModel = require('.././models/Users')

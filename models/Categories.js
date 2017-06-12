@@ -133,6 +133,14 @@ exports.saveSubCategory = function (req, res, next) {
 exports.changeToApprove = function (req, res, next) {
   var domainId = req.params.domain_id
   let domain = req.app.locals.Domain
+  var referer = req.header('referer')
+  var page = referer.slice(-1)
+
+  if (isNaN(page) === true) {
+    var pageNumber = 1
+  } else {
+    pageNumber = page
+  }
 
   domain.update({
     status: 1
@@ -143,12 +151,20 @@ exports.changeToApprove = function (req, res, next) {
   }).then(function (updateResult) {
   })
 
-  res.redirect('/categories/create')
+  res.redirect('/categories/create/' + pageNumber)
 }
 
 exports.changeToReject = function (req, res, next) {
   var domainId = req.params.domain_id
   let domain = req.app.locals.Domain
+  var referer = req.header('referer')
+  var page = referer.slice(-1)
+
+  if (isNaN(page) === false) {
+    var pageNumber = 1
+  } else {
+    pageNumber = page
+  }
 
   domain.update({
     status: 0
@@ -159,14 +175,8 @@ exports.changeToReject = function (req, res, next) {
   }).then(function (updateResult) {
   })
 
-  res.redirect('/categories/create')
+  res.redirect('/categories/create/' + pageNumber)
 }
-
-// exports.list = function (req, res, next) {
-
-//   res.render('/categories/list')
-// }
-
 
 
 function generateOptions (optionData) {

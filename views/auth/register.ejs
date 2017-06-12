@@ -5,6 +5,8 @@
     <form id="register-form" action="/auth/register" enctype="multipart/form-data" method="post">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
         <div class="body bg-gray">
+        
+	<div class="text-danger">*<small> All fields are mandatory</small></div>
             <%
                 var flashClass = ' hide'
                 var flashMessage = ''
@@ -72,7 +74,7 @@
 
             <div class="form-group">
                 <input type="text" name="dob" id="dob" class="form-control"
-                       placeholder="YYYY/MM/DD"/>
+                       placeholder="Date Of Birth"/>
                 <div class="dob-error-msg alert-danger hide"></div>
                 <%
                     if (typeof (errors) !== 'undefined' &&

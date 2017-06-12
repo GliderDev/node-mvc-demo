@@ -130,18 +130,7 @@ module.exports.controller = function (app) {
     authHelper.ensureAuth,
     function (req, res, next) {
       app.locals.acl.userRoles(req.user.user_id, function (err, roles) {
-        if (err) {
-          let errData = {
-            error: true,
-            message: 'Sorry an error occurred while determining user role'
-          }
-          app.locals.logger.error(
-            req.url + ': Error response: ' +
-            JSON.stringify(errData) +
-            'error:' + JSON.stringify(err)
-          )
-          res.json(errData)
-        }
+        if (err) next(new Error(err))
         // Returns user role
         if (roles.length) {
           res.json({
