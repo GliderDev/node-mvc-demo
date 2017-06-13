@@ -165,7 +165,11 @@ exports.save_edit = function (req, res, next) {
     connection.query('UPDATE user set ? WHERE user_id = ? ', [data, id], function (err, rows) {
       if (err) { req.app.locals.logger.error('Error Updating : %s ', err) }
 
-      res.redirect('/users/view')
+      if (req.app.locals.userId === 1) {
+        res.redirect('/users/view')
+      } else {
+        res.redirect('/')
+      }
     })
   })
 }

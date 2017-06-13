@@ -4,7 +4,8 @@
     "name"      : "API",
     "script"    : "app.js",
     "env": {
-      "COMMON_ENV_VAR": "true"
+      "COMMON_ENV_VAR": "true",
+      "TZ": "Asia/Kolkata" // Time zone
     },
     // Environment variables injected when starting with --env production
     // http://pm2.keymetrics.io/docs/usage/application-declaration/#switching-to-different-environments

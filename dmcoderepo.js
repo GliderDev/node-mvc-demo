@@ -183,6 +183,7 @@ passport.use(
               return cb(null, false)
             }
             if (res) {
+              app.locals.userId = user.user_id
               return cb(null, user)
             } else {
               req.flash('error', 'Incorrect password')
@@ -337,9 +338,14 @@ app.use(function (err, req, res, next) {
 
   // Match /api routes
   if (path.match(/\/api\/?/)) {
-    res.json({
-      message: 'Oops! an error occurred'
-    })
+    if (errorData.message && errorData.stack) {
+      res.json(errorData)
+    } else {
+      res.json({
+        message: 'Oops! an error occurred'
+      })
+    }
+
   } else {
     res.render('500', {errorData: errorData})
   }

@@ -76,7 +76,11 @@
 
                     <div class="box-footer">
                             <button type="submit" class="btn btn-primary">Submit</button>
-                            <a href= "/users/view" class="btn btn-warning" >Cancel</a>
+                            <% if(userId === 1) {%>
+                                <a href= "/users/view" class="btn btn-warning" >Cancel</a>
+                            <% } else {%>
+                                <a href= "/" class="btn btn-warning" >Cancel</a>
+                            <% } %>
                     </div>
 
                 </form>

@@ -33,7 +33,7 @@
 
             <li class="treeview admin-role" id="side-user-tree">
                 <a href="#">
-									<i class="fa fa-user"></i>
+									<i class="fa fa-users"></i>
 									<span>User Management</span>
 									<i class="fa fa-angle-left pull-right"></i>
                 </a>
@@ -41,6 +41,18 @@
 						    <ul class="treeview-menu">
                     <li><a href="/users/add"><i class="fa fa-angle-double-right"></i> Add Users</a></li>
                     <li><a href="/users/view"><i class="fa fa-angle-double-right"></i> View Users</a></li>
+                </ul>
+             </li>
+
+             <li class="treeview admin-role user-role" id="side-user-tree">
+                <a href="#">
+									<i class="fa fa-user"></i>
+									<span>My Profile</span>
+									<i class="fa fa-angle-left pull-right"></i>
+                </a>
+
+						    <ul class="treeview-menu">
+                    <li><a href="/users/edit/<%= userId%>"><i class="fa fa-angle-double-right"></i> Edit profile</a></li>
                 </ul>
              </li>
 

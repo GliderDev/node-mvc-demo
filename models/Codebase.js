@@ -54,29 +54,46 @@ exports.saveCodeBase = function (req, res, next) {
   var now = dateTime.create()
   var nowDate = now.format('Y-m-d H:M:S')
 
-  fileUpload.mv(path.join(__dirname, '/../public/uploads/attachment', fileUpload.name), function (err) {
-    if (err) {
-      next(new Error(err))
-      req.app.locals.logger.error(err)
+  if (fileUpload) {
+    fileUpload.mv(path.join(__dirname, '/../public/uploads/attachment', fileUpload.name), function (err) {
+      if (err) {
+        next(new Error(err))
+        req.app.locals.logger.error(err)
+      }
+    })
+    var data = {
+      name: req.body.title,
+      description: req.body.description,
+      domain_id: req.body.code_category_list,
+      author_id: req.user.user_id,
+      uploaded_on: nowDate,
+      updated_on: nowDate,
+      updated_by: userId,
+      downloads: 0,
+      rating: 0,
+      status: 0,
+      file_path: fileUpload.name,
+      reference: JSON.stringify(req.body.refUser),
+      projects: req.body.projRef
     }
-  })
-
-  let data = {
-    name: req.body.title,
-    description: req.body.description,
-    domain_id: req.body.code_category_list,
-    author_id: req.user.user_id,
-    uploaded_on: nowDate,
-    updated_on: nowDate,
-    updated_by: userId,
-    downloads: 0,
-    rating: 0,
-    status: 0,
-    file_path: fileUpload.name,
-    reference: JSON.stringify(req.body.refUser),
-    projects: req.body.projRef
+  } else {
+    data = {
+      name: req.body.title,
+      description: req.body.description,
+      domain_id: req.body.code_category_list,
+      author_id: req.user.user_id,
+      uploaded_on: nowDate,
+      updated_on: nowDate,
+      updated_by: userId,
+      downloads: 0,
+      rating: 0,
+      status: 0,
+      file_path: '',
+      reference: JSON.stringify(req.body.refUser),
+      projects: req.body.projRef
+    }
   }
-  console.log(data)
+
   codebase.create(data).then(function (codeBaseData) {
     res.redirect('/')
   })
@@ -164,7 +181,6 @@ exports.viewCodebase = function (req, res, next) {
       alldomain.forEach(function (allDomainData) {
         try {
           let userReference = JSON.parse(allDomainData.reference)
-          req.app.locals.logger.info('reference data ' + userReference)
 
           if (userReference === null) {
             var userRef = false

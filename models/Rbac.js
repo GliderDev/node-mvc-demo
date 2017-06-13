@@ -27,7 +27,7 @@ module.exports.setRole = function (acl) {
       roles: 'user',
       allows: [
         {
-          resources: ['/', 'categories', 'auth', 'codebase'],
+          resources: ['/', 'categories', 'auth', 'codebase', 'users'],
           permissions: ['auth', 'view', 'create', 'edit']
         }
       ]
