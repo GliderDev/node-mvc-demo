@@ -27,28 +27,28 @@
 											enctype="multipart/form-data">
 
                      <div class="box-body">
-
                            <div class="form-group">
                                 <label>Main category</label>
-
                                 <select class="form-control" name="code_category_list" id="code_category_list">
 
                                     <option class="cat_default" value="-1">--Select category--</option>
                                     <%- html %>
 																		<option class="cat_new" value="createNew">--Create new--</option>
-
                                 </select>
+                                <div class="category-error-msg alert-danger hide"></div>
                             </div>
 
 														<div class="form-group">
                                 <label>Title</label>
                                 <input type="text" class="form-control" id="title" name="title"
                                        placeholder="Enter Title">
+                                <div class="title-error-msg alert-danger hide"></div>
                             </div>
 
 														<div class="form-group">
                                 <label>Description</label>
                                 <textarea id="description" name="description" class="form-control" rows="3" placeholder="Enter ..."></textarea>
+                                <div class="desc-error-msg alert-danger hide"></div>
                             </div>
 
 														<div class="form-group">
@@ -58,8 +58,11 @@
 
 														<div class="form-group">
                                 <label>Reference</label> </br>
-																<%- userHtml %>
-
+																<input type="text" id="searchUser" name="searchUser"></input>
+                                <div class="scroll" style=" width: 200px;height: 100px;overflow: scroll;">
+                                     <div class="form-group" id="userPreference" name= "userPreference">
+                                </div>
+                                </div>
                             </div>
 
 														<div class="form-group">

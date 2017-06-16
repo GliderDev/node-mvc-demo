@@ -13,7 +13,6 @@ $(document).ready(function () {
 
   $('#submitBtn').click(function (event) {
     event.preventDefault()
-
     var fname = $('#f_name').val()
     var email = $('#email').val()
     var pass = $('#password').val()
@@ -71,6 +70,38 @@ $(document).ready(function () {
     }
 
     if (!error) $('#userForm').submit()
+  })
+
+  $('#codeBaseButton').click(function (event) {
+    event.preventDefault()
+
+    revertDangerClass()
+    var error = false
+    var title = $('#title').val()
+    var desc = $('#description').val()
+    var category = $('#code_category_list').val()
+
+    if (title === '') {
+      error = true
+      $('.title-error-msg').html(
+        '<p>Title cannot be Blank</p>'
+      ).removeClass('hide')
+    }
+
+    if (desc === '') {
+      error = true
+      $('.desc-error-msg').html(
+        '<p>Desc cannot be Blank</p>'
+      ).removeClass('hide')
+    }
+    if (category === '-1') {
+      error = true
+      $('.category-error-msg').html(
+        '<p>Please select a Category</p>'
+      ).removeClass('hide')
+    }
+
+    if (!error) $('#codeBaseForm').submit()
   })
 
   $('.delete-user').click(function (event) {
@@ -206,6 +237,23 @@ $(document).ready(function () {
       $(this).blur()
       $('#chat-send').focus().click()
     }
+  })
+
+  $('#searchUser').bind('change keydown keyup', function () {
+    var searchText = $(this).val()
+
+    $.ajax({
+      type: 'POST',
+      url: '/codebase/getSearchUsers',
+      data: {data: searchText},
+      cache: false,
+      success: function (searchResult) {
+        $('#userPreference').html(searchResult)
+      },
+      error: function (error) {
+        console.log('error')
+      }
+    })
   })
 }) // End of Document ready event
 
@@ -475,4 +523,8 @@ function getDashboardCodeBase (page) {
       console.log('error')
     }
   })
+}
+
+function revertDangerClass () {
+  $('.alert-danger').addClass('hide')
 }

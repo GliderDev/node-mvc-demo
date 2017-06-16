@@ -45,7 +45,6 @@ exports.addCodeBase = function (req, res, next) {
 }
 
 exports.saveCodeBase = function (req, res, next) {
-  console.log('test')
   let codebase = req.app.locals.Codebase
   let path = require('path')
   var fileUpload = req.files.uploads
@@ -246,5 +245,27 @@ exports.viewCodebase = function (req, res, next) {
     }
 
     res.redirect('/auth/forgot')
+  })
+}
+
+// To get the searched user in user preference section in Codebase page
+exports.getSearchUsers = function (req, res, next) {
+  var searchUser = req.body.data
+  let User = req.app.locals.User
+  var userHtml = ''
+  User.findAll({
+    where: {
+      first_name: {
+        $like: searchUser + '%'
+      }
+    }
+  }).then(function (result) {
+    result.forEach(function (user) {
+      userHtml += '<input id="check_user_' + user.user_id + '"' +
+          'type="checkbox" name="refUser"' +
+          'value="' + user.user_id +
+          '" />' + user.first_name + '</br>'
+    })
+    res.send(userHtml)
   })
 }

@@ -52,6 +52,12 @@ module.exports.controller = function (app) {
     codeBaseModel.viewCodebase
   )
 
+  // To get the searched users for User Reference
+  app.post(
+    '/codebase/getSearchUsers',
+    authHelper.ensureAuth,
+    codeBaseModel.getSearchUsers
+  )
 }
 
 

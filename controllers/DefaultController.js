@@ -310,7 +310,7 @@ module.exports.controller = function (app) {
         dob = dob.format('m/d/y H:M')
         // Writing DOB
         ws.cell(userDataRow, 5)
-          .date(dob)
+          .string(dob)
           .style(tbodyCenterStyle)
 
         // converting date to date object
@@ -345,5 +345,31 @@ module.exports.controller = function (app) {
     process.nextTick(function () {
       throw new Error('testing Uncaught exception')
     })
+  })
+
+  // Testing cron
+  app.get('/cron', function (req, res, next) {
+    var CronJob = require('cron').CronJob
+    var cron = new CronJob({
+      cronTime: '*/2 * * * * *',
+      onTick: function (req, res, next) {
+        /*
+        * Runs every 2 minutes
+        */
+        var dateTime = require('node-datetime')
+        var now = dateTime.create()
+        var nowDate = now.format('Y-m-d H:m:S')
+        console.log('Cronjob running at ' + nowDate)
+      },
+      start: false,
+      onComplete: function () {
+    /*
+    * Complete the cron job here
+    */
+        console.log('Cron job ends')
+      }
+    })
+
+    cron.start()
   })
 } // End of Default Controller
