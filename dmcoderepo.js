@@ -60,6 +60,7 @@ app.locals.csrfProtection = csrfProtection
 var parseForm = bodyParser.urlencoded({ extended: false })
 app.locals.parseForm = parseForm
 app.use(parseForm)
+app.use(bodyParser.json())
 
 // Adding file upload middleware to application
 app.use(expressFileUpload())
