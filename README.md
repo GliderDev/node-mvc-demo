@@ -4,7 +4,7 @@ This ia demo project to test out the capabilities of NodeJs.
 # Functionalities
 * Authentication using passport package
 * Authorization using acl package
-* CURD operation using sequelize(ORM) and express-myconnection packages
+* CRUD operation using sequelize(ORM) and express-myconnection packages
 * pdf and excel reporting using html-pdf and excel4node package
 * logging using winston and morgan packages
 * Real time counter and basic chat using socket.io package
